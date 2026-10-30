@@ -35,7 +35,7 @@ python3 page-builder/tools/check-class-names.py --namespace brand-site pages/**/
 ## Scope: one page on a live site
 
 brand.umd.edu is complete and already on the design system. This project
-builds only new pages for it — currently `pages/trademarks-licensing/vendor-search.html`.
+builds only new pages for it — currently the Licensed Vendors Database (`pages/trademarks-licensing/licensed-vendors-database.html`, plus a `-tshirt` copy showing a keyword-search state). Its vendor data is generated: re-run `python3 tools/build-vendor-data.py` to refresh it from the Google Sheet, never edit `scripts/licensed-vendors-data.js` by hand.
 So in `shared/header.html` every nav link points to the **live** brand.umd.edu
 URL, except pages this project builds, which use `{{ROOT}}`. Drawer refs still
 use the live section slugs (`trademarks-licensing`, …) as directory names, so a

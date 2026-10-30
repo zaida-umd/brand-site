@@ -30,7 +30,36 @@ _None yet._
 ## Page-built classes
 
 Classes defined in this repo rather than by the design system. Inline links must
-use the DS gradient underline (`page-builder/RULES.md` §33), never
+use the DS gradient underline (`page-builder/RULES.md` §34), never
 `text-decoration: underline`.
 
-_None yet._
+### `umd-brand-site-filter-*` — left filter rail with keyword search
+Pages: `pages/trademarks-licensing/licensed-vendors-database.html`,
+`pages/trademarks-licensing/licensed-vendors-database-tshirt.html`
+
+DS counterpart: none. The DS has the Filter Band (a horizontal select + search
+panel, critical.css §23) but no faceted left rail. This rail is the
+admissions-design programs explorer (`umd-admissions-filter-*`), renamespaced,
+with the keyword search moved into the rail and nested bucket → category
+checkboxes (`-bucket`, `-bucket-row`, `-bucket-toggle`, `-bucket-children`) plus a
+type-ahead inside the Vendor Name group (`-group-find`). It reuses the DS
+`umd-field-checkbox-wrapper`, `umd-text-cluster-pill`,
+`umd-layout-background-highlight-light` and `umd-text-line-trailing`; the
+results are unaltered tabular person cards, which draw their own rules. Behavior is in
+`scripts/licensed-vendors-database.js`.
+
+Two people now hand-roll the same rail under different namespaces. If a third
+project needs it, promote it to `page-builder` (LAYOUT-PATTERNS.md + a shared
+script) rather than copying it again.
+
+### `umd-element-person data-display="tabular"` — fundraiser status in the italic `slot="pronouns"`
+Same pages. Cards are the DS tabular person card, unaltered, led by the contact
+person with the vendor in `slot="association"` and the vendor website as a
+secondary call-to-action in `slot="actions"`. "Approved for internal fundraisers" uses
+the italic `slot="pronouns"` line. (As of components 2.0.0 the contact lockup
+accepts `slot="additional-contact"` but never renders it, in any display.)
+
+### `umd-field-input-search-wrapper` — 24px search icon
+Same pages, scoped to `.umd-brand-site-filter-search`. The DS icon sits in a 32px
+box; this page resizes the box to 24px (`--umd-space-md`) and centers it in the
+field. The icon itself and its hover state are the DS's, unchanged.

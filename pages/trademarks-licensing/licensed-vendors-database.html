@@ -29,7 +29,7 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="googlebot" content="noindex, nofollow">
   <!-- SHARED:head-meta:END -->
-  <title>{{PAGE_TITLE}} — {{SITE_NAME}} | University of Maryland</title>
+  <title>Licensed Vendors Database — Brand | University of Maryland</title>
 
   <!-- ============================================================
        UMD Critical CSS — Hybrid CDN + Local
@@ -842,6 +842,184 @@
       text-decoration: none;
     }
   </style>
+  <!-- Licensed Vendors Database — page-specific styles.
+       The filter rail is the admissions-design programs explorer
+       (admissions-design/pages/academics/programs.html), renamespaced to
+       umd-brand-site-filter-* (RULES.md §40), with the keyword search moved
+       into the rail and nested bucket → category checkboxes added. The
+       results are unaltered tabular umd-element-person cards. -->
+  <style>
+    /* two-column layout: filter rail + results */
+    .umd-brand-site-filter-layout { display:block; }
+
+    @media (min-width:1024px) {
+      .umd-brand-site-filter-layout { display:flex; align-items:flex-start; gap:64px; }
+      /* not sticky: a pinned rail has to cap its own height, and a nested
+         scroller inside the page scroller is worse than a long rail. */
+      .umd-brand-site-filter-sidebar { width:30%; min-width:280px; max-width:360px; flex:0 0 auto; }
+    }
+
+    .umd-brand-site-filter-results { flex:1; min-width:0; }
+
+    /* mobile filter toggle */
+    .umd-brand-site-filter-mobile-toggle {
+      display:flex; justify-content:space-between; align-items:center; gap:16px;
+      width:100%; padding:14px 16px; margin-bottom:16px; cursor:pointer;
+      background:var(--umd-color-black); color:var(--umd-color-white); border:0; font:inherit; font-weight:700;
+    }
+
+    .umd-brand-site-filter-mobile-toggle::after { content:"+"; font-size:22px; line-height:1; }
+
+    .umd-brand-site-filter-mobile-toggle[aria-expanded="true"]::after { content:"\2212"; }
+
+    @media (min-width:1024px) { .umd-brand-site-filter-mobile-toggle { display:none; } }
+
+    @media (max-width:1023px) {
+      .umd-brand-site-filter-form { display:none; }
+      .umd-brand-site-filter-form[data-open] { display:block; }
+    }
+
+    /* DS trailing-line headings. The DS style sets no weight, so h2/label
+       bold would leak in; and its "& + *" adds 40px below, tightened here. */
+    .umd-brand-site-filter-heading { margin:0; font-weight:400; }
+
+    .umd-brand-site-filter-heading + * { margin-top:var(--umd-space-md); }
+
+    /* "Keyword search" is the field's <label>, so it needs block display for the trailing line */
+    label.umd-brand-site-filter-heading { display:block; }
+
+    /* keyword search — DS default field (umd-field-input in
+       umd-field-input-search-wrapper, which draws the search icon) */
+    .umd-brand-site-filter-search { margin:0 0 var(--umd-space-xl); }
+
+
+    /* the DS search icon at 24px, centered in the field. Its icon and hover
+       state come from the DS unchanged. */
+    .umd-brand-site-filter-search .umd-field-input-search-wrapper::before,
+    .umd-brand-site-filter-search .umd-field-input-search-wrapper::after {
+      width:var(--umd-space-md); height:var(--umd-space-md); padding:0;
+      top:calc(50% - var(--umd-space-md) / 2); bottom:auto; right:var(--umd-space-xs);
+    }
+
+
+    /* accordion filter groups */
+    .umd-brand-site-filter-group { border-bottom:1px solid var(--umd-color-black); margin-bottom:24px; padding-bottom:24px; }
+
+    .umd-brand-site-filter-group:last-of-type { border-bottom:0; }
+
+    .umd-brand-site-filter-group > button {
+      display:flex; position:relative; justify-content:space-between; align-items:center;
+      gap:16px; width:100%; padding:0 24px 0 0; background:none; border:0; cursor:pointer;
+      font:inherit; font-weight:700; font-size:18px; text-align:left; color:var(--umd-color-black);
+      transition:color .3s;
+    }
+
+    .umd-brand-site-filter-group > button:hover, .umd-brand-site-filter-group > button:focus-visible { color:var(--umd-color-red); }
+
+    .umd-brand-site-filter-group > button::before, .umd-brand-site-filter-group > button::after,
+    .umd-brand-site-filter-bucket-toggle::before, .umd-brand-site-filter-bucket-toggle::after {
+      content:""; position:absolute; top:calc(50% - 1px); right:0;
+      width:12px; height:2px; background:currentColor; transition:transform .3s;
+    }
+
+    .umd-brand-site-filter-group > button::after { transform:rotate(90deg); }
+
+    .umd-brand-site-filter-group[data-open] > button::after { transform:rotate(0); }
+
+    .umd-brand-site-filter-group-body { display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+
+    .umd-brand-site-filter-group[data-open] .umd-brand-site-filter-group-body { grid-template-rows:1fr; }
+
+    .umd-brand-site-filter-group-body > div { min-height:0; overflow:hidden; }
+
+    .umd-brand-site-filter-group-body fieldset {
+      border:0; margin:0; padding:18px 0 2px; display:flex; flex-direction:column; gap:14px;
+    }
+
+    .umd-brand-site-filter-group-find { padding-top:18px; }
+
+    .umd-brand-site-filter-group-find + fieldset { padding-top:16px; }
+
+    /* "Show all" collapses the vendor list; it steps aside while the
+       type-ahead is narrowing the list. */
+    .umd-brand-site-filter-group-body fieldset[data-collapsed]:not([data-finding]) .umd-brand-site-filter-option-extra { display:none; }
+
+    .umd-brand-site-filter-group-body label[hidden] { display:none; }
+
+    .umd-brand-site-filter-show-all-cluster.umd-text-cluster-pill { display:inline-flex; margin-top:8px; }
+
+    .umd-brand-site-filter-show-all-cluster.umd-text-cluster-pill > .umd-brand-site-filter-show-all { margin-top:0; border:0; cursor:pointer; color:var(--umd-color-black); }
+
+    .umd-brand-site-filter-show-all-cluster.umd-text-cluster-pill > .umd-brand-site-filter-show-all:hover,
+    .umd-brand-site-filter-show-all-cluster.umd-text-cluster-pill > .umd-brand-site-filter-show-all:focus-visible { background-color:var(--umd-color-gold); }
+
+    /* option rows use the DS .umd-field-checkbox-wrapper */
+    .umd-brand-site-filter-group-body .umd-field-checkbox-wrapper { align-items:flex-start; gap:12px; margin-bottom:0; line-height:1.3; }
+
+    .umd-brand-site-filter-group-body input[type="checkbox"] { margin:.15em 0 0; width:18px; height:18px; accent-color:var(--umd-color-red); flex:0 0 auto; }
+
+    .umd-brand-site-filter-count { color:var(--umd-color-gray-medium-a-a); font-variant-numeric:tabular-nums; }
+
+    /* product category buckets: parent box + expand toggle, children indented */
+    .umd-brand-site-filter-bucket-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+
+    .umd-brand-site-filter-bucket-toggle {
+      position:relative; flex:0 0 auto; width:28px; height:22px; padding:0;
+      background:none; border:0; cursor:pointer; color:var(--umd-color-black);
+    }
+
+    .umd-brand-site-filter-bucket-toggle::before, .umd-brand-site-filter-bucket-toggle::after { right:8px; width:10px; }
+
+    .umd-brand-site-filter-bucket-toggle::after { transform:rotate(90deg); }
+
+    .umd-brand-site-filter-bucket-toggle[aria-expanded="true"]::after { transform:rotate(0); }
+
+    .umd-brand-site-filter-bucket-toggle:hover, .umd-brand-site-filter-bucket-toggle:focus-visible { color:var(--umd-color-red); }
+
+    .umd-brand-site-filter-bucket-children {
+      display:flex; flex-direction:column; gap:12px;
+      margin:12px 0 4px 8px; padding-left:22px; border-left:1px solid var(--umd-color-gray-lighter);
+    }
+
+    .umd-brand-site-filter-bucket-children[hidden] { display:none; }
+
+    .umd-brand-site-filter-actions { margin-top:8px; }
+
+    /* active-filter pills — DS .umd-text-cluster-pill chip */
+    .umd-brand-site-filter-pills { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:16px; }
+
+    .umd-brand-site-filter-pills-label { font-weight:700; margin-right:4px; }
+
+    .umd-brand-site-filter-pill-cluster.umd-text-cluster-pill { margin-top:0; display:inline-flex; flex-wrap:wrap; gap:8px; }
+
+    .umd-brand-site-filter-pills .umd-text-cluster-pill > * { margin-top:0; border:0; cursor:pointer; color:var(--umd-color-black); }
+
+    .umd-brand-site-filter-pills .umd-text-cluster-pill > button:hover,
+    .umd-brand-site-filter-pills .umd-text-cluster-pill > button:focus-visible { background-color:var(--umd-color-gold); }
+
+    /* link-styled button: the DS gradient underline (RULES.md §34), not text-decoration */
+    .umd-brand-site-filter-clear {
+      border:0; padding:0; margin-left:6px; cursor:pointer; color:var(--umd-color-black);
+      background-color:transparent; background-image:linear-gradient(var(--umd-color-black), var(--umd-color-black));
+      background-position:left calc(100% - 1px); background-repeat:no-repeat; background-size:100% 1px;
+      transition:color .5s, background-image .5s;
+    }
+
+    .umd-brand-site-filter-clear:hover, .umd-brand-site-filter-clear:focus-visible {
+      background-image:linear-gradient(var(--umd-color-red), var(--umd-color-red));
+    }
+
+    .umd-brand-site-filter-count-line { margin:0; }
+
+    /* rule above the first listing; the tabular cards draw the rest.
+       The first card has no top padding of its own, so the list supplies it. */
+    .umd-brand-site-filter-list {
+      margin-top:var(--umd-space-md); padding-top:var(--umd-space-md);
+      border-top:1px solid var(--umd-color-black);
+    }
+
+    .umd-brand-site-filter-empty { font-size:18px; margin-top:var(--umd-space-lg); }
+  </style>
 
   <script src="https://unpkg.com/@universityofmaryland/web-components-library@2.0.0/dist/cdn.js"></script>
   <!-- SHARED:gate:START — generated from shared/gate.html; do not edit here -->
@@ -1135,7 +1313,7 @@
           <a href="https://brand.umd.edu/trademarks-licensing/maryland-trademarks">Maryland Trademarks</a>
           <a href="https://brand.umd.edu/trademarks-licensing/for-vendors">For Vendors</a>
           <a href="https://brand.umd.edu/trademarks-licensing/for-campus">For Campus</a>
-          <a href="../../pages/trademarks-licensing/vendor-search.html">Vendor Search</a>
+          <a href="../../pages/trademarks-licensing/licensed-vendors-database.html">Licensed Vendors Database</a>
         </div>
       </umd-element-nav-item>
     </nav>
@@ -1188,67 +1366,81 @@
         <a href="https://brand.umd.edu/trademarks-licensing/maryland-trademarks"><span>Maryland Trademarks</span></a>
         <a href="https://brand.umd.edu/trademarks-licensing/for-vendors"><span>For Vendors</span></a>
         <a href="https://brand.umd.edu/trademarks-licensing/for-campus"><span>For Campus</span></a>
-        <a href="../../pages/trademarks-licensing/vendor-search.html" data-selected><span>Vendor Search</span></a>
+        <a href="../../pages/trademarks-licensing/licensed-vendors-database.html" data-selected><span>Licensed Vendors Database</span></a>
       </div>
     </div>
     <!-- DRAWER:END -->
   </umd-element-navigation-header>
   <!-- SHARED:header:END -->
 
-  <!-- ========================================
-       3. PAGE CONTENT
-       Replace the sections below with actual content.
-       Use umd-layout-vertical-landing on each <section>.
-       Use umd-layout-space-horizontal-* wrappers for content width.
-  ======================================== -->
+  <main id="main-content">
 
-  <!-- HERO SECTION (if needed) -->
-  <!--
-  <section class="umd-layout-vertical-landing">
-    <umd-element-hero data-display="stacked">
-      <h1 slot="headline">{{HEADLINE}}</h1>
-      <p slot="text">{{SUBHEAD}}</p>
-      <img slot="image" src="{{IMAGE_URL}}" alt="{{IMAGE_ALT}}" />
-      <umd-element-call-to-action data-display="primary" slot="actions">
-        <a href="{{CTA_URL}}">{{CTA_TEXT}}</a>
-      </umd-element-call-to-action>
+  <!-- HERO — stacked, dark, no image: the same treatment brand.umd.edu uses
+       on its section landings (Trademarks & Licensing, Visual Identity). -->
+  <section>
+    <umd-element-hero
+      data-display="stacked"
+      data-layout-height="small"
+      data-layout-space-horizontal="large"
+      data-theme="dark">
+      <p slot="eyebrow">Trademarks &amp; Licensing</p>
+      <h1 slot="headline">Licensed Vendors Database</h1>
+      <div slot="text"><p>Find a UMD Licensed Vendor approved for ordering promotional items.</p></div>
     </umd-element-hero>
   </section>
-  -->
 
-  <!-- CONTENT SECTION EXAMPLE -->
-  <!--
-  <section class="umd-layout-vertical-landing">
-    <div class="umd-layout-space-horizontal-larger">
-      <umd-element-section-intro-wide>
-        <h2 slot="headline">{{SECTION_TITLE}}</h2>
-        <umd-element-call-to-action data-display="secondary" slot="actions">
-          <a href="{{LINK}}">{{LINK_TEXT}}</a>
-        </umd-element-call-to-action>
-      </umd-element-section-intro-wide>
+  <div class="umd-layout-space-horizontal-larger umd-layout-space-vertical-interior">
+    <umd-element-breadcrumb>
+      <div slot="paths">
+        <a href="https://brand.umd.edu/" aria-label="Return Home"><span aria-hidden="true">Home</span></a>
+        <a href="https://brand.umd.edu/trademarks-licensing"><span>Trademarks &amp; Licensing</span></a>
+        <p aria-label="Current Page"><span>Licensed Vendors Database</span></p>
+      </div>
+    </umd-element-breadcrumb>
+  </div>
+
+  <!-- VENDOR SEARCH — keyword search + filter rail at left, person list at right.
+       Behavior and data: scripts/licensed-vendors-database.js and
+       scripts/licensed-vendors-data.js (generated from the vendor sheet). -->
+  <div class="umd-layout-space-horizontal-larger umd-layout-space-vertical-interior">
+    <div class="umd-brand-site-filter-layout">
+
+      <aside class="umd-brand-site-filter-sidebar" aria-label="Search and filter vendors">
+        <button type="button" id="umd-brand-site-filter-mobile-toggle" class="umd-brand-site-filter-mobile-toggle" aria-expanded="false" aria-controls="umd-brand-site-filter-form">
+          <span>Search &amp; filter vendors</span>
+        </button>
+        <form id="umd-brand-site-filter-form" class="umd-brand-site-filter-form" role="search" action="#">
+          <div class="umd-brand-site-filter-search">
+            <label for="umd-brand-site-filter-keyword" class="umd-text-line-trailing umd-brand-site-filter-heading"><span>Keyword search</span></label>
+            <div class="umd-field-input-search-wrapper">
+              <input type="text" class="umd-field-input" id="umd-brand-site-filter-keyword" name="q" value="" placeholder="e.g. tshirt, mugs" autocomplete="off" />
+            </div>
+          </div>
+
+          <h2 class="umd-text-line-trailing umd-brand-site-filter-heading"><span>Refine</span></h2>
+
+          <div id="umd-brand-site-filter-groups"></div>
+
+          <div class="umd-brand-site-filter-actions">
+            <umd-element-call-to-action data-display="outline">
+              <button type="button">Reset filters</button>
+            </umd-element-call-to-action>
+          </div>
+        </form>
+      </aside>
+
+      <div class="umd-brand-site-filter-results">
+        <div class="umd-brand-site-filter-pills" id="umd-brand-site-filter-pills" hidden></div>
+        <p class="umd-brand-site-filter-count-line umd-sans-small" id="umd-brand-site-filter-count" role="status" aria-live="polite"></p>
+        <div class="umd-brand-site-filter-list" id="umd-brand-site-filter-list"></div>
+        <p id="umd-brand-site-filter-empty" class="umd-brand-site-filter-empty" hidden>No licensed vendors match your search. Try a different keyword or remove a filter.</p>
+      </div>
+
     </div>
-  </section>
-  -->
+  </div>
 
-  <!-- PATHWAY EXAMPLE (standard — requires dark wrapper) -->
-  <!--
-  <section class="umd-layout-vertical-landing" style="background: #000;">
-    <umd-element-pathway data-theme="dark">
-      <h2 slot="headline">{{HEADLINE}}</h2>
-      <p slot="text">{{BODY_TEXT}}</p>
-      <img slot="image" src="{{IMAGE_URL}}" alt="{{IMAGE_ALT}}" />
-      <umd-element-call-to-action data-display="primary" data-theme="dark" slot="actions">
-        <a href="{{CTA_URL}}">{{CTA_TEXT}}</a>
-      </umd-element-call-to-action>
-    </umd-element-pathway>
-  </section>
-  -->
+  </main>
 
-  <!-- ========================================
-       4. FOOTER
-       Visual footer with campus background image.
-       Default image: ../images/large/campus/footer-campus.jpg
-  ======================================== -->
   <!-- SHARED:footer:START — generated from shared/footer.html; do not edit here -->
   <!-- Mirrors the live brand.umd.edu simple footer: no logo slot, no imagery.
        Social links are bare <a>s — the DS swaps in the icon from the URL. -->
@@ -1307,6 +1499,8 @@
   ============================================================ -->
   <script src="../../page-builder/scripts/grid-animations.js"></script>
   <!-- SHARED:page-scripts:END -->
+  <script src="../../scripts/licensed-vendors-data.js"></script>
+  <script src="../../scripts/licensed-vendors-database.js"></script>
 
 </body>
 </html>
