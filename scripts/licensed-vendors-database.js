@@ -240,7 +240,7 @@
           esc(it.v) + '"><span>' + esc(it.label) +
           ' <span aria-hidden="true">×</span><span class="sr-only"> (remove)</span></span></button>';
       }).join('') + '</span>' +
-      '<button type="button" class="umd-brand-site-filter-clear umd-sans-smaller" data-clear-all>Clear all</button>';
+      '<button type="button" class="umd-brand-site-filter-clear umd-sans-min" data-clear-all>Clear all</button>';
   }
 
   function update() { collect(); render(); }
