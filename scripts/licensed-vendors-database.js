@@ -221,14 +221,7 @@
     emptyEl.hidden = matched.length > 0;
 
     var noun = matched.length === 1 ? ' licensed vendor' : ' licensed vendors';
-    var line = 'Showing ' + matched.length + noun;
-    if (state.q) {
-      line += ' for “' + state.q + '”';
-      if (qBuckets.length) {
-        line += ', including every vendor in ' + qBuckets.map(function (b) { return b.title; }).join(', ');
-      }
-    }
-    countEl.textContent = line;
+    countEl.textContent = 'Showing ' + matched.length + noun;
     renderPills();
   }
 

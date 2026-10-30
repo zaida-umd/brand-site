@@ -1015,8 +1015,11 @@
        The first card has no top padding of its own, so the list supplies it. */
     .umd-brand-site-filter-list {
       margin-top:var(--umd-space-md); padding-top:var(--umd-space-md);
-      border-top:1px solid var(--umd-color-black);
+      border-top:1px solid var(--umd-color-gray-light);   /* matches the cards' own rules */
     }
+
+    /* 56px has no spacing token (xl is 40, max is 120) */
+    @media (min-width:1024px) { .umd-brand-site-filter-list { margin-top:56px; } }
 
     .umd-brand-site-filter-empty { font-size:18px; margin-top:var(--umd-space-lg); }
   </style>
