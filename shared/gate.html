@@ -1,0 +1,210 @@
+  <!-- ============================================================
+       PROTOTYPE ACCESS GATE
+       Inlined into the <head> of every page by
+       page-builder/tools/build-chrome.py. Edit here, not in pages/*.html.
+
+       Keeps a GitHub Pages prototype blank for anyone without the shared
+       credentials, and — with the noindex meta chrome.py stamps into every
+       page — out of search results.
+
+       It is NOT access control. The whole check ships to the browser, so the
+       markup is retrievable with `curl` and the hash can be attacked offline.
+       Keep the project repo PRIVATE and put nothing behind it that would
+       matter if it leaked. See page-builder/scripts/gate.js for the full
+       reasoning.
+
+       DELETE THIS FILE on a project that should be public — the inliner skips
+       a region whose source file is absent, and the next build-chrome.py run
+       strips the block back out of every page.
+
+       ADD AN ACCOUNT — never type a password into this file by hand:
+
+           python3 page-builder/tools/gate.py --write shared/gate.html
+
+       That prompts for the username and password without echoing them, and
+       rewrites the block between the GATE:USERS markers below. The plaintext
+       password is never written to this repo.
+  ============================================================ -->
+  <style>
+    /* The lock is CSS, not JavaScript, and it is unconditional: the page is
+       hidden from the first paint and STAYS hidden if gate.js 404s, throws,
+       or scripting is off. gate.js adds .umd-gate-unlocked only after a
+       password verifies. Do not move this into a JS-added class — that
+       inverts it into fail-open. */
+    html:not(.umd-gate-unlocked) { overflow: hidden; }
+    html:not(.umd-gate-unlocked) body { visibility: hidden; }
+    html:not(.umd-gate-unlocked) body > .umd-gate { visibility: visible; }
+
+    .umd-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+      background: #000;
+      font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+    }
+
+    .umd-gate__panel {
+      width: 100%;
+      max-width: 420px;
+      margin: auto;
+      padding: 40px 32px;
+      background: #1a1a1a;
+      border-top: 4px solid #e21833;
+      color: #fff;
+      text-align: left;
+    }
+
+    .umd-gate__eyebrow {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #ffd200;
+    }
+
+    .umd-gate__title {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .umd-gate__message {
+      margin: 0 0 24px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #d1d1d1;
+    }
+
+    .umd-gate__label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e6e6e6;
+    }
+
+    .umd-gate__input {
+      display: block;
+      width: 100%;
+      margin-bottom: 16px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 16px;   /* below 16px, iOS Safari zooms the page on focus */
+      color: #000;
+      background: #fff;
+      border: 1px solid #757575;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .umd-gate__input:focus-visible {
+      outline: 2px solid #ffd200;
+      outline-offset: 2px;
+    }
+
+    .umd-gate__submit {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #e21833;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .umd-gate__submit:hover { background: #c1152b; }
+    .umd-gate__submit:disabled { background: #757575; cursor: default; }
+    .umd-gate__submit:focus-visible { outline: 2px solid #ffd200; outline-offset: 2px; }
+
+    /* Always in the layout, so filling it in on a failed attempt does not
+       shove the button out from under the cursor. */
+    .umd-gate__error {
+      min-height: 20px;
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 20px;
+      color: #ff9a9a;
+    }
+
+    .umd-gate__note {
+      margin: 16px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #a8a8a8;
+    }
+
+    /* gate.js never arrived — say so, rather than leaving a blank page that
+       looks like a broken deploy. Still locked: the rule above is untouched. */
+    html.umd-gate-error body::before {
+      content: "This prototype could not load its sign-in. Check that page-builder/scripts/gate.js is published alongside the site.";
+      visibility: visible;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: #000;
+      color: #fff;
+      font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: center;
+    }
+  </style>
+  <noscript>
+    <style>
+      html:not(.umd-gate-unlocked) body::before {
+        content: "This prototype requires JavaScript to sign in.";
+        visibility: visible;
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: #000;
+        color: #fff;
+        font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+        font-size: 16px;
+        text-align: center;
+      }
+    </style>
+  </noscript>
+  <script>
+    window.UMD_GATE = {
+      title: 'This prototype is private',
+      message: 'Sign in with the credentials shared with you to view this preview.',
+      note: 'Trouble signing in? Contact the project team.',
+
+      /* 0 = this browser tab only. Otherwise the sign-in carries across tabs
+         and pages for this many hours, so a reviewer opening links in new
+         tabs is not asked again. */
+      rememberHours: 12,
+
+      /* PBKDF2 rounds. Must match what tools/gate.py used to make the hashes
+         below — change it and every account stops verifying. */
+      iterations: 310000,
+
+      /* GATE:USERS:START — written by page-builder/tools/gate.py; do not hand-edit */
+      users: [
+        { "user": "WebServices", "salt": "5a93279dee761d80ba3248862508ae49", "hash": "bd591fe7b960965ba6e69917c307bc20b2adbc6f48c7fae4296fe19be605be2d" }
+      ]
+      /* GATE:USERS:END */
+    };
+  </script>
+  <script src="{{ROOT}}page-builder/scripts/gate.js"
+          onerror="document.documentElement.classList.add('umd-gate-error')" defer></script>

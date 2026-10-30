@@ -1,0 +1,21 @@
+  <!-- ============================================================
+       SHARED PAGE SCRIPTS — end-of-body script tags every page loads.
+       Inlined into every page by page-builder/tools/build-chrome.py.
+       Edit here, not in pages/*.html.
+
+       These are the canonical shared implementations in
+       page-builder/scripts/. NEVER paste one inline — every page must
+       share one implementation, and an inlined copy goes stale the
+       moment the submodule moves.
+
+       The {{ROOT}} token is what makes this safe across depths.
+       TEMPLATE.html ships src="../scripts/grid-animations.js", which is
+       correct only for a page inside the page-builder repo's own test/
+       directory; in a project it must resolve to page-builder/scripts/,
+       one extra ../ deeper for a page in a section folder. Hand-editing
+       that path is how it ends up 404ing on half the site.
+
+       Add filter-band.js only on projects using the Filter Band pattern
+       (page-builder/LAYOUT-PATTERNS.md).
+  ============================================================ -->
+  <script src="{{ROOT}}page-builder/scripts/grid-animations.js"></script>

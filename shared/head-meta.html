@@ -1,0 +1,24 @@
+  <!-- ============================================================
+       SHARED CHROME — site-wide <head> meta
+       Inlined into every page by page-builder/tools/build-chrome.py.
+       Edit here, not in pages/*.html.
+
+       SITE-WIDE meta only. A page's own <title> and
+       <meta name="description"> differ per page and stay in the page,
+       below this region.
+
+       The noindex pair below is the scaffold default: a design project
+       is a prototype or client review, and should not surface in
+       search. DELETE IT before the site goes live for real.
+
+       A robots.txt is not an alternative — it is only fetched from a
+       HOST root, and a GitHub Pages project site is served from
+       /<repo>/, so this meta is the only mechanism that applies there.
+       The googlebot line is a belt-and-braces duplicate of the robots
+       line.
+
+       Delete this file if the project has none; the inliner skips a
+       region whose source file is absent.
+  ============================================================ -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">

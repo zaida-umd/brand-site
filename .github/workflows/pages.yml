@@ -1,0 +1,75 @@
+# Deploy this prototype to GitHub Pages.
+#
+# GitHub Pages is NOT available for private repositories on a personal Free
+# plan, so `configure-pages` fails here with "Resource not accessible by
+# integration" the moment the repo is private. That is a repo-visibility
+# problem, not a workflow bug — no edit to this file fixes it. A prototype is
+# kept unseen by shared/gate.html plus the noindex pair in shared/head-meta.html,
+# not by the repo being private.
+#
+# If it still fails once the repo is public, check
+# Settings -> Actions -> General -> Workflow permissions is "Read and write";
+# a read-only setting caps the `pages: write` requested below.
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with the page-builder submodule)
+        uses: actions/checkout@v7
+        with:
+          # NOT recursive. Pages need page-builder/scripts and
+          # page-builder/images; page-builder's own design-system submodule is
+          # a 35k-file design-source reference that nothing here serves.
+          submodules: true
+          fetch-depth: 1
+
+      - name: Trim files that must not be published
+        # The artifact is the whole working tree, so without this the page
+        # builder's own test/ and qa/ fixtures ship inside every project site —
+        # ungated, and carrying no noindex, which is exactly what this project
+        # is trying to avoid. Keep scripts/ and images/: pages load those at
+        # runtime.
+        run: |
+          rm -rf page-builder/test \
+                 page-builder/qa \
+                 page-builder/templates \
+                 page-builder/design-system \
+                 page-builder/node_modules
+          echo "Remaining HTML under page-builder/:"
+          find page-builder -name '*.html' | head
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+        with:
+          # Creates the Pages site on first run. Needs the repo to be public on
+          # a Free plan — see the note at the top.
+          enablement: true
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: .
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

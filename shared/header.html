@@ -1,0 +1,129 @@
+  <umd-element-navigation-utility data-layout-lock="large" role="navigation" aria-label="Utility navigation"></umd-element-navigation-utility>
+
+  <!-- Mirrors the live brand.umd.edu header (no CTA, no utility row, UMD search).
+       The site is complete and lives at brand.umd.edu; this project builds only
+       pages under Trademarks & Licensing. Every nav link points to the LIVE page
+       except the ones this project builds, which use {{ROOT}}. -->
+  <umd-element-navigation-header
+    sticky
+    class="umd-layout-space-horizontal-full"
+    search-url="https://search.umd.edu">
+    <a slot="logo" href="https://brand.umd.edu/" aria-label="Brand">
+      <!-- Full-color (red + black) logo downloaded from brand.umd.edu. The
+           onerror fallback is mandatory — the component renders a broken <img>
+           rather than falling back on its own. -->
+      <img src="{{ROOT}}images/logos/brand-site-logo.svg"
+           alt="Maryland Brand"
+           onerror="this.onerror=null;this.src='{{ROOT}}page-builder/images/logos/primary-logo-dark.svg';" />
+    </a>
+
+    <nav slot="main-navigation">
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/brand-platform">Brand Platform</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/brand-platform" aria-label="Brand Platform">Overview</a>
+          <a href="https://brand.umd.edu/brand-platform/campaigns-initiatives">Campaigns &amp; Initiatives</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/visual-identity">Visual Identity</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/visual-identity" aria-label="Visual Identity">Overview</a>
+          <a href="https://brand.umd.edu/visual-identity/logos">Logos</a>
+          <a href="https://brand.umd.edu/visual-identity/colors">Colors</a>
+          <a href="https://brand.umd.edu/visual-identity/typography">Typography</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/applying-the-brand">Applying the Brand</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/applying-the-brand" aria-label="Applying the Brand">Overview</a>
+          <a href="https://brand.umd.edu/applying-the-brand/editorial">Editorial</a>
+          <a href="https://brand.umd.edu/applying-the-brand/email">Email</a>
+          <a href="https://brand.umd.edu/applying-the-brand/environmental">Environmental</a>
+          <a href="https://brand.umd.edu/applying-the-brand/events">Events</a>
+          <a href="https://brand.umd.edu/applying-the-brand/photography">Photography</a>
+          <a href="https://brand.umd.edu/applying-the-brand/promotional-items">Promotional Items</a>
+          <a href="https://brand.umd.edu/applying-the-brand/editorial/maryland-today">Storytelling</a>
+          <a href="https://brand.umd.edu/applying-the-brand/videography">Videography</a>
+          <a href="https://brand.umd.edu/applying-the-brand/web">Web</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/resources-support">Resources &amp; Support</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/resources-support" aria-label="Resources &amp; Support">Overview</a>
+          <a href="https://brand.umd.edu/resources-support/accessibility">Accessibility</a>
+          <a href="https://brand.umd.edu/resources-support/artificial-intelligence">Artificial Intelligence</a>
+          <a href="https://brand.umd.edu/resources-support/brand-checklists">Brand Checklists</a>
+          <a href="https://brand.umd.edu/resources-support/communicators-group">Communicators Group</a>
+          <a href="https://brand.umd.edu/resources-support/media-policy">Media Policy</a>
+          <a href="https://brand.umd.edu/resources-support/request-support">Request Support</a>
+          <a href="https://brand.umd.edu/resources-support/social-media-guidelines">Social Media</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/trademarks-licensing">Trademarks &amp; Licensing</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/trademarks-licensing" aria-label="Trademarks &amp; Licensing">Overview</a>
+          <a href="https://brand.umd.edu/trademarks-licensing/maryland-trademarks">Maryland Trademarks</a>
+          <a href="https://brand.umd.edu/trademarks-licensing/for-vendors">For Vendors</a>
+          <a href="https://brand.umd.edu/trademarks-licensing/for-campus">For Campus</a>
+          <a href="{{ROOT}}pages/trademarks-licensing/vendor-search.html">Vendor Search</a>
+        </div>
+      </umd-element-nav-item>
+    </nav>
+
+    <!-- DRAWER:START — mobile / compact navigation.
+         All drawer slots must be DIRECT children of umd-element-navigation-header
+         and every link text needs its own <span>.
+
+         data-child-ref / data-parent-ref values are the section DIRECTORY names
+         under pages/ (only trademarks-licensing exists locally; the others are
+         live sections, named the same way so a page added later just works). -->
+    <div slot="primary-slide-links">
+      <a href="https://brand.umd.edu/brand-platform" data-child-ref="brand-platform"><span>Brand Platform</span></a>
+      <a href="https://brand.umd.edu/visual-identity" data-child-ref="visual-identity"><span>Visual Identity</span></a>
+      <a href="https://brand.umd.edu/applying-the-brand" data-child-ref="applying-the-brand"><span>Applying the Brand</span></a>
+      <a href="https://brand.umd.edu/resources-support" data-child-ref="resources-support"><span>Resources &amp; Support</span></a>
+      <a href="https://brand.umd.edu/trademarks-licensing" data-child-ref="trademarks-licensing"><span>Trademarks &amp; Licensing</span></a>
+    </div>
+
+    <div slot="children-slides">
+      <div data-parent-ref="brand-platform">
+        <a href="https://brand.umd.edu/brand-platform/campaigns-initiatives"><span>Campaigns &amp; Initiatives</span></a>
+      </div>
+      <div data-parent-ref="visual-identity">
+        <a href="https://brand.umd.edu/visual-identity/logos"><span>Logos</span></a>
+        <a href="https://brand.umd.edu/visual-identity/colors"><span>Colors</span></a>
+        <a href="https://brand.umd.edu/visual-identity/typography"><span>Typography</span></a>
+      </div>
+      <div data-parent-ref="applying-the-brand">
+        <a href="https://brand.umd.edu/applying-the-brand/editorial"><span>Editorial</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/email"><span>Email</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/environmental"><span>Environmental</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/events"><span>Events</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/photography"><span>Photography</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/promotional-items"><span>Promotional Items</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/editorial/maryland-today"><span>Storytelling</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/videography"><span>Videography</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/web"><span>Web</span></a>
+      </div>
+      <div data-parent-ref="resources-support">
+        <a href="https://brand.umd.edu/resources-support/accessibility"><span>Accessibility</span></a>
+        <a href="https://brand.umd.edu/resources-support/artificial-intelligence"><span>Artificial Intelligence</span></a>
+        <a href="https://brand.umd.edu/resources-support/brand-checklists"><span>Brand Checklists</span></a>
+        <a href="https://brand.umd.edu/resources-support/communicators-group"><span>Communicators Group</span></a>
+        <a href="https://brand.umd.edu/resources-support/media-policy"><span>Media Policy</span></a>
+        <a href="https://brand.umd.edu/resources-support/request-support"><span>Request Support</span></a>
+        <a href="https://brand.umd.edu/resources-support/social-media-guidelines"><span>Social Media</span></a>
+      </div>
+      <div data-parent-ref="trademarks-licensing">
+        <a href="https://brand.umd.edu/trademarks-licensing/maryland-trademarks"><span>Maryland Trademarks</span></a>
+        <a href="https://brand.umd.edu/trademarks-licensing/for-vendors"><span>For Vendors</span></a>
+        <a href="https://brand.umd.edu/trademarks-licensing/for-campus"><span>For Campus</span></a>
+        <a href="{{ROOT}}pages/trademarks-licensing/vendor-search.html"><span>Vendor Search</span></a>
+      </div>
+    </div>
+    <!-- DRAWER:END -->
+  </umd-element-navigation-header>

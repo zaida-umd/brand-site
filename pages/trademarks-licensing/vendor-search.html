@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SHARED:head-meta:START — generated from shared/head-meta.html; do not edit here -->
+  <!-- ============================================================
+       SHARED CHROME — site-wide <head> meta
+       Inlined into every page by page-builder/tools/build-chrome.py.
+       Edit here, not in pages/*.html.
+
+       SITE-WIDE meta only. A page's own <title> and
+       <meta name="description"> differ per page and stay in the page,
+       below this region.
+
+       The noindex pair below is the scaffold default: a design project
+       is a prototype or client review, and should not surface in
+       search. DELETE IT before the site goes live for real.
+
+       A robots.txt is not an alternative — it is only fetched from a
+       HOST root, and a GitHub Pages project site is served from
+       /<repo>/, so this meta is the only mechanism that applies there.
+       The googlebot line is a belt-and-braces duplicate of the robots
+       line.
+
+       Delete this file if the project has none; the inliner skips a
+       region whose source file is absent.
+  ============================================================ -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <!-- SHARED:head-meta:END -->
+  <title>{{PAGE_TITLE}} — {{SITE_NAME}} | University of Maryland</title>
+
+  <!-- ============================================================
+       UMD Critical CSS — Hybrid CDN + Local
+       MUST precede cdn.js. If cdn.js loads first, elements upgrade
+       before :defined rules exist and container-type never gets set.
+
+       Load order:
+         <link> CDN bundles → <style> local subset → <script> cdn.js
+
+       Browsers block on stylesheet fetches before parsing the script
+       tag, so all CSS — both upstream and local — applies before
+       custom elements upgrade.
+
+       SOURCE OF TRUTH: styles/critical.css
+       The inline <style> block is a verbatim copy of styles/critical.css.
+       When updating, edit styles/critical.css first, then copy here.
+       See REQUIRED-CSS.md for what each rule does and why.
+  ============================================================ -->
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/font-faces.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/tokens.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/base.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/typography.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/element.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/web-components.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/layout.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/animation.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@1.8.16/css/accessibility.min.css">
+  <style>
+    /* ============================================================
+       1. COMPONENT REGISTRATION GAP-FILLS
+       Re-add :defined rules for components missing from upstream
+       web-components.min.css. As those land upstream, drop these.
+       ============================================================ */
+
+    /* umd-element-utility-header — RETIRED 2026-09-08: the tag does not exist.
+       It was never a component, in any version — the design system's only
+       utility-bar tag is umd-element-navigation-utility, which is what actually
+       renders the UMD flag / "A Top 20 Public Research University" band. These
+       rules were written on the assumption that a real component had been left
+       out of web-components.min.css, so they gap-filled a phantom: the element
+       never upgraded, :not(:defined) always matched, and it sat on every page
+       at height 0 with no children. Do NOT re-add. If you want the band, use
+       umd-element-navigation-utility (data-alert-off="true" hides its alert
+       strip, which is how TEMPLATE.html has always rendered it). */
+
+    /* umd-element-carousel* — RETIRED (upstream since web-styles-library@1.8.14): all six
+       variants (plus new umd-element-carousel-people) now ship in upstream
+       web-components.min.css with content-visibility: auto + min-height
+       placeholder sizing. Do NOT re-add — a local content-visibility: hidden
+       loads after the CDN link at equal specificity, overrides the upstream
+       placeholder, and reintroduces layout shift. */
+
+    /* umd-layout-image-expand — :not(:defined) hiding + placeholder sizing
+       landed upstream in v1.8.14. display:block and width:100% remain
+       project-specific (collapses without them; upstream sets neither). */
+    umd-layout-image-expand {
+      display: block;
+      container-type: inline-size;
+      width: 100%;
+    }
+
+    /* Project-specific spacing for breadcrumb (not a default in upstream). */
+    umd-element-breadcrumb:defined { margin-top: 16px; }
+
+
+    /* ============================================================
+       2. WATERMARK DECORATION
+       ============================================================ */
+    :is(.umd-text-decoration-watermark, .umd-watermark, .umd-watermark-dark) > * {
+      position: absolute;
+      top: 20px;
+      left: -2%;
+      color: #f1f1f1;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: min(calc(44px + 13vw), 240px);
+      line-height: 0;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+    :is(.umd-text-decoration-watermark, .umd-watermark):not(.umd-watermark-dark) > * {
+      opacity: 0.6;
+      z-index: -1;
+    }
+    .umd-watermark-dark > * {
+      opacity: 0.12;
+      z-index: inherit;
+    }
+    @keyframes slide-in-from-left {
+      from { transform: translate(-15vw); }
+      to   { transform: translate(0); }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: scroll()) {
+        :is(.umd-text-decoration-watermark, .umd-watermark, .umd-watermark-dark) > * {
+          animation: slide-in-from-left forwards;
+          animation-timeline: view();
+          animation-range-start: 0;
+          animation-range-end: 100vh;
+          transform: translate(-15vw);
+        }
+      }
+    }
+
+
+    /* ============================================================
+       3. LAYOUT AUGMENTATIONS
+       Extra properties on upstream layout classes that layout.min.css
+       doesn't include. These cascade over the upstream rules.
+       ============================================================ */
+
+    /* Upstream sets max-width/padding correctly. These extra properties are
+       required for watermark positioning and the internal @container query
+       used by umd-element-section-intro-wide. */
+    .umd-layout-space-horizontal-larger {
+      position: relative;
+      container-type: inline-size;
+      isolation: isolate;
+    }
+
+    /* Upstream omits align-items and flex-shrink on the columns-left layout.
+       align-items: flex-start prevents variable-height sidebar from stretching;
+       flex-shrink: 0 keeps the fixed 242px sidebar width under constraint.
+       Breakpoint matches upstream desktop.min (1024px) after DSYS-3063 fix —
+       sidebar width/margin moved from tablet.min (768px) to desktop.min. */
+    @media (min-width: 1024px) {
+      .umd-layout-space-columns-left { align-items: flex-start; }
+      .umd-layout-space-columns-left > *:first-child { flex-shrink: 0; }
+    }
+
+
+    /* ============================================================
+       4. BACKGROUND-FULL-DARK BUG FIX
+       layout.min.css serializes the highDef breakpoint as
+       @media([object Object]) — ignored by browsers — because
+       background/full.ts:42 uses media.queries.highDef (the whole
+       object) instead of media.queries.highDef.min. This rule
+       cascades over the broken upstream with the correct breakpoint.
+       ============================================================ */
+    .umd-layout-background-full-dark {
+      background-color: #000000;
+      padding: 48px 0;
+    }
+    @media (min-width: 768px) {
+      .umd-layout-background-full-dark { padding: 80px 0; }
+    }
+    @media (min-width: 1200px) {
+      .umd-layout-background-full-dark { padding: 104px 0; }
+    }
+
+
+    /* ============================================================
+       5. MASONRY SECTION-INTRO COMPANION
+       The base .umd-layout-grid-masonry class is provided by layout.min.css (CDN).
+       This rule compensates for masonry's negative top margin when a section
+       intro immediately precedes it — layout.min.css does not include this fix.
+       ============================================================ */
+    @media (min-width: 768px) {
+      umd-element-section-intro + .umd-layout-grid-masonry,
+      umd-element-section-intro-wide + .umd-layout-grid-masonry { padding-top: 32px; }
+    }
+    @media (min-width: 1024px) {
+      umd-element-section-intro + .umd-layout-grid-masonry,
+      umd-element-section-intro-wide + .umd-layout-grid-masonry { padding-top: 40px; }
+    }
+
+
+    /* ============================================================
+       6. COLOR UTILITIES — not in upstream tokens or typography bundles
+       ============================================================ */
+    .text-black { color: #000; }
+    /* .umd-text-rich-advanced * (§7) paints every descendant #454545 at the same
+       (0,1,0) specificity as this utility but later in the file, so a bare
+       .text-black loses inside editorial body copy. Scope it so it wins. */
+    .umd-text-rich-advanced .text-black { color: #000; }
+    .text-white { color: #ffffff; }
+
+
+    /* ============================================================
+       7. RICH TEXT ADVANCED — editorial body copy
+       Light and dark variants. 18px/1.5em with link hover styles.
+
+       NOTE: element.min.css (linked in TEMPLATE.html) now ships
+       .umd-text-rich-advanced with the same base sizing and link
+       animation. This section is kept as an intentional DELTA:
+       upstream only colors list content #454545; we force it on
+       all descendants. Do not delete without visual verification.
+       ============================================================ */
+
+    /* Light variant */
+    .umd-text-rich-advanced {
+      font-size: 18px;
+      line-height: 1.5em;
+    }
+    .umd-text-rich-advanced * {
+      color: #454545;
+    }
+    .umd-text-rich-advanced > * {
+      font-size: 18px;
+      margin-top: 24px;
+    }
+    .umd-text-rich-advanced > *:first-child {
+      margin-top: 0;
+    }
+    .umd-text-rich-advanced a {
+      text-decoration: none;
+      color: #000000;
+      background-image: linear-gradient(#000000, #000000);
+      position: relative;
+      background-position: left calc(100% - 1px);
+      background-repeat: no-repeat;
+      background-size: 100% 1px;
+      transition: color 0.5s, background-size 0.5s, background-image 0.5s, background-position 0.5s;
+    }
+    .umd-text-rich-advanced a:hover,
+    .umd-text-rich-advanced a:focus {
+      background-image: linear-gradient(#E21833, #E21833);
+    }
+
+    /* Dark variant */
+    .umd-text-rich-advanced-dark {
+      font-size: 18px;
+      line-height: 1.5em;
+    }
+    .umd-text-rich-advanced-dark p,
+    .umd-text-rich-advanced-dark li { color: #ffffff; }
+    .umd-text-rich-advanced-dark a {
+      text-decoration: none;
+      color: #ffffff;
+      background-image: linear-gradient(#ffffff, #ffffff);
+      position: relative;
+      background-position: left calc(100% - 1px);
+      background-repeat: no-repeat;
+      background-size: 100% 1px;
+      transition: color 0.5s, background-size 0.5s, background-image 0.5s, background-position 0.5s;
+    }
+    .umd-text-rich-advanced-dark a:hover,
+    .umd-text-rich-advanced-dark a:focus {
+      background-image: linear-gradient(#FFD200, #FFD200);
+    }
+
+
+    /* ============================================================
+       8. INTERIOR PAGE LAYOUT UTILITIES
+       ============================================================ */
+
+    /* Content column max-width (Tailwind utility) */
+    .max-w-\[800px\] { max-width: 800px; }
+
+
+    /* ============================================================
+       9. IMAGE-EXPAND CONTENT UTILITIES
+       Classes for div[slot="content"] inside umd-layout-image-expand.
+       ============================================================ */
+    .max-w-\[480px\] { max-width: 480px; }
+    .w-full          { width: 100%; }
+    .block           { display: block; }
+    .mr-auto         { margin-right: auto; }
+    .ml-auto         { margin-left: auto; }
+    .pl-md           { padding-left: 24px; }
+
+    :is(.umd-text-line-adjustent, .umd-adjacent-line-text) { position: relative; }
+    :is(.umd-text-line-adjustent, .umd-adjacent-line-text)::before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: #E21833;
+      left: -24px;
+    }
+
+    /* Body copy on dark/image backgrounds — white text, animated underline links */
+    .umd-text-rich-simple-large-dark {
+      font-size: 18px;
+      line-height: 1.5em;
+      color: #ffffff;
+    }
+    .umd-text-rich-simple-large-dark * { color: #ffffff; }
+    .umd-text-rich-simple-large-dark > * { font-size: 18px; margin-top: 24px; }
+    .umd-text-rich-simple-large-dark > *:first-child { margin-top: 0; }
+    .umd-text-rich-simple-large-dark a {
+      text-decoration: none;
+      color: #ffffff;
+      background-image: linear-gradient(#ffffff, #ffffff);
+      position: relative;
+      background-position: left calc(100% - 1px);
+      background-repeat: no-repeat;
+      background-size: 100% 1px;
+      transition: color 0.5s, background-size 0.5s, background-image 0.5s, background-position 0.5s;
+    }
+    .umd-text-rich-simple-large-dark a:hover,
+    .umd-text-rich-simple-large-dark a:focus {
+      background-image: linear-gradient(#FFD200, #FFD200);
+    }
+
+
+    /* ============================================================
+       10. STICKY COLUMNS UTILITIES
+       Spacing tokens for slot content inside umd-element-sticky-columns.
+       ============================================================ */
+    .mb-md { margin-bottom: 24px; }
+    .mb-sm { margin-bottom: 16px; }
+
+
+    /* ============================================================
+       11. UTILITY NAVIGATION / SHELL-ITEM LINK STYLES
+       The shadow DOM ::slotted(*) only reaches div[slot="utility-navigation"],
+       NOT descendants — all link and separator styles must live here.
+
+       Canonical production pattern (matches umd.edu markup):
+       - Slot container: plain <div slot="utility-navigation">
+       - Each item: div.umd-shell-utility-item > div.umd-shell-utility-actions
+                    > a.umd-sans-smaller (or button for dropdowns)
+       - Dropdown: sibling div.umd-shell-utility-links[aria-hidden] panel
+
+       THREE LAYERS — keep them separate:
+       A. BASE (unscoped) — the reusable .umd-shell-utility-item pattern.
+          Used in the nav-header utility slot AND reused in pathway /
+          banner-promo / section-intro action slots (RULES.md §5). These
+          rules MUST stay unscoped or the reuse renders unstyled.
+       B. NAV-HEADER (scoped) — overrides the shadow ::slotted(*) gap:24px
+          and adds dropdown anchoring + panel. Only meaningful in the slot.
+       C. FLAT LINKS (scoped, gated) — bare <a> children of the slot, which
+          layer A never matches because every one of its selectors goes
+          through .umd-shell-utility-item.
+       ============================================================ */
+
+    /* ---- A. BASE: reusable shell-item pattern (do NOT scope) ---- */
+    .umd-shell-utility-item .umd-shell-utility-actions {
+      align-items: center;
+      display: flex;
+      gap: 4px;
+    }
+    .umd-shell-utility-item:not(:last-child) .umd-shell-utility-actions {
+      border-right: 1px solid #E6E6E6;
+      margin-right: 16px;
+      padding-right: 16px;
+    }
+    .umd-shell-utility-item a {
+      color: #242424;
+      text-decoration: none;
+    }
+    .umd-shell-utility-item a:hover,
+    .umd-shell-utility-item a:focus {
+      color: #E21833;
+    }
+
+    /* ---- B. NAV-HEADER: scoped to the utility-navigation slot ---- */
+    /* Override the shadow ::slotted(*) gap:24px (the wrapper margins above
+       handle item spacing in the shell pattern).
+
+       GATED ON :has(.umd-shell-utility-item) — this reset is ONLY correct for the
+       shell pattern, where each item supplies its own 16+1+16px margin/border
+       separator. A slot holding plain <a> children has no such margins, so an
+       unconditional `gap: 0` collapsed them into a single run-on string of links.
+       The shadow's own gap:24px is the right default there, so leave it alone.
+       Projects using flat links then need no spacing override at all — only link
+       colour/decoration, which layer C below now supplies. */
+    umd-element-navigation-header div[slot="utility-navigation"]:has(.umd-shell-utility-item) {
+      gap: 0;
+    }
+
+    /* ---- C. FLAT LINKS: bare <a> children of the utility slot ---- */
+    /* WHY THIS EXISTS. Layer A styles `.umd-shell-utility-item a` — every one of
+       its selectors runs through that wrapper class. A slot holding plain <a>
+       children matches NONE of it, and the component's own shadow ::slotted(*)
+       reaches only the slotted div, never its descendants. So a bare <a> renders
+       browser-default blue-and-underlined, on a white header, with no error.
+
+       That is not an edge case: TEMPLATE.html's own utility-navigation example is
+       bare <a>, so it is the pattern most pages are built from. Before this layer
+       existed the gap was noted in the comment above and left open, and every
+       project rediscovered it and hand-wrote the same override in its own CSS
+       (admissions-design/shared/chrome.css is one such copy). Fixing it here means
+       every page inlining critical.css gets it for free.
+
+       GATED with :not(:has(...)) — the exact mirror of layer B's gate — so these
+       rules never touch the shell pattern, where layer A already owns the anchors
+       and the wrapper supplies its own separators. The two patterns stay disjoint.
+
+       No `gap` is set: the shadow's own gap:24px is correct for flat links, and
+       layer B deliberately leaves it alone. */
+    umd-element-navigation-header div[slot="utility-navigation"]:not(:has(.umd-shell-utility-item)) a {
+      color: #242424;
+      font-family: "Interstate", Helvetica, Arial, Verdana, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.25;
+      text-decoration: none;
+      transition: color 0.3s ease-in-out;
+    }
+    umd-element-navigation-header div[slot="utility-navigation"]:not(:has(.umd-shell-utility-item)) a:hover,
+    umd-element-navigation-header div[slot="utility-navigation"]:not(:has(.umd-shell-utility-item)) a:focus {
+      color: #E21833;
+    }
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item {
+      position: relative;
+      z-index: 99999;
+    }
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item button {
+      color: #242424;
+      text-decoration: none;
+    }
+    /* Dropdown panel (shown via JS toggling aria-hidden — see LAYOUT-PATTERNS.md) */
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item .umd-shell-utility-links {
+      display: none;
+    }
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item .umd-shell-utility-links > * {
+      color: #242424;
+      display: block;
+      padding: 12px;
+      text-align: right;
+      text-decoration: none;
+    }
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item .umd-shell-utility-links a:hover,
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item .umd-shell-utility-links a:focus {
+      color: #a90007;
+    }
+    umd-element-navigation-header div[slot="utility-navigation"] .umd-shell-utility-item .umd-shell-utility-links[aria-hidden="false"] {
+      align-items: flex-end;
+      background-color: #fafafa;
+      box-shadow: -1px 9px 32px -10px rgba(0, 0, 0, .19);
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      right: 0;
+      top: 16px;
+      width: 200px;
+      max-width: 80vw;
+    }
+
+
+    /* ============================================================
+       12. BANNER-PROMO STACKED ACTIONS — light-DOM column flex.
+       Pairs with the shadow-DOM injection in OVERRIDES.md so the 8px
+       gap is visible regardless of where children render.
+       ============================================================ */
+    .banner-promo-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+
+    /* ============================================================
+       13. SECTION DIVIDER — standalone <hr> utility.
+       ============================================================ */
+    .umd-text-divider {
+      border: none;
+      border-top: 1px solid #000000;
+      margin: 0 0 24px 0;
+    }
+    .umd-text-divider.dark {
+      border-top-color: #ffffff;
+    }
+
+
+    /* ============================================================
+       14. TRAILING-LINE LABEL — section eyebrow with horizontal line
+       Source: @universityofmaryland/web-styles-library: element.text.line.trailing
+
+       NOTE: element.min.css (linked in TEMPLATE.html) now ships
+       .umd-text-line-trailing / -light / -dark. This section is kept
+       as an intentional DELTA: we add font-weight: 700 (upstream
+       omits it) and use #000 for the dark background (upstream uses
+       #242424). Do not delete without visual verification.
+       ============================================================ */
+    .umd-text-line-trailing,
+    .umd-text-line-trailing-dark {
+      font-family: "Interstate", Helvetica, Arial, Verdana, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      line-height: 1.42em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+    .umd-text-line-trailing::before,
+    .umd-text-line-trailing-dark::before {
+      content: "";
+      position: absolute;
+      top: 9px;
+      right: 0;
+      width: 100vw;
+      height: 1px;
+      background: #000000;
+      z-index: 1;
+    }
+    .umd-text-line-trailing > span,
+    .umd-text-line-trailing-dark > span {
+      position: relative;
+      background-color: inherit;
+      padding-right: 8px;
+      z-index: 2;
+    }
+    .umd-text-line-trailing + *,
+    .umd-text-line-trailing-dark + * {
+      margin-top: 40px;
+    }
+    .umd-text-line-trailing-dark {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    .umd-text-line-trailing-dark::before {
+      background: #ffffff;
+    }
+
+
+    /* ============================================================
+       15. NOTE — GRID CLASSES FROM LAYOUT.MIN.CSS (CDN)
+       All standard grid classes are provided by layout.min.css loaded
+       from CDN in the <head>. Do NOT add them here — that duplicates CSS.
+
+       Available from CDN (layout.min.css):
+         umd-layout-grid-columns-two/three/four  — no-gap at tablet+
+         umd-layout-grid-gap-stacked/two/three/four  — 32px gap at all bp
+         umd-layout-grid-gap-two  — widens to 40px at 1024px
+         umd-layout-grid-child-fill-height  — height:100% on item + child
+         umd-layout-grid-child-size-double  — grid-column: span 2 at 650px+
+           (feature 2+1+1 card grids — see LAYOUT-PATTERNS.md)
+         umd-layout-grid-inline-tablet-rows  — flex CTA row at 650px+
+         umd-layout-grid-masonry  — 2-col staggered (base CSS)
+         umd-layout-grid-offset-three  — 3-col staircase offset
+         umd-layout-grid-border-two/three/four  — bordered cell grids
+
+       Typography classes (umd-sans-*, incl. umd-sans-largest-uppercase
+       used by the sticky text+stats pattern) likewise ship from the CDN
+       typography.min.css — check that bundle before flagging one missing.
+
+       Only add grid-related CSS here when it is genuinely absent from
+       layout.min.css (e.g. shellcraft-only classes like umd-animation-grid
+       and umd-shell-person-grid-helper padding).
+       ============================================================ */
+
+
+    /* ============================================================
+       16. RETIRED — OVERLAY CARD .size-large MIN-HEIGHT
+       Now shipped verbatim by web-components.min.css (linked in
+       TEMPLATE.html): umd-element-card-overlay.size-large
+       {min-height: 320px; 560px @768px}. Section number reserved —
+       do NOT renumber later sections when retiring a rule.
+       ============================================================ */
+
+
+    /* ============================================================
+       17. TUITION & AID 2-COLUMN GRID
+       Asymmetric content split: 1.5fr / 1fr at 1024px+.
+       ============================================================ */
+    .umd-layout-grid-tuition-two {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    @media (min-width: 1024px) {
+      .umd-layout-grid-tuition-two {
+        grid-template-columns: 1.5fr 1fr;
+        gap: 80px;
+      }
+    }
+
+
+    /* ============================================================
+       18. FULL-WIDTH OUTLINE BUTTON — light-DOM utility class
+       Visually mirrors umd-element-call-to-action data-display="outline"
+       but stretches to fill its grid cell. Use when the DS web component's
+       shadow-DOM max-width:380px would fight against your layout.
+       ============================================================ */
+    .umd-action-outline-block {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 24px;
+      font-family: "Interstate", Helvetica, Arial, Verdana, sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.28em;
+      text-align: center;
+      text-decoration: none;
+      background-color: #ffffff;
+      border: 1px solid #242424;
+      color: #000000;
+      transition: background 0.5s ease-in-out, border 0.5s ease-in-out, color 0.5s ease-in-out;
+    }
+    .umd-action-outline-block:hover,
+    .umd-action-outline-block:focus {
+      background-color: #242424;
+      color: #ffffff;
+    }
+    .umd-action-outline-block.dark {
+      background-color: transparent;
+      border: 1px solid #ffffff;
+      color: #ffffff;
+    }
+    .umd-action-outline-block.dark:hover,
+    .umd-action-outline-block.dark:focus {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+
+    /* ============================================================
+       19. BORDER GRID — person-grid-helper container query + padding
+       Source: umd.edu shellcraft (umdApp-release-116.css)
+       Verified from: https://umd.edu/about/university-presidents
+
+       The base umd-layout-grid-border-two/three/four grid CSS is
+       provided by layout.min.css (CDN). Only the container query
+       setup and the umd-shell-person-grid-helper responsive padding
+       are absent from layout.min.css — those come from shellcraft.
+
+       Usage: add class="umd-shell-person-grid-helper" to every
+       umd-element-person host inside a border grid.
+       ============================================================ */
+
+    /* Establishes named container for padding queries */
+    [class*="umd-layout-grid-border-two"],
+    [class*="umd-layout-grid-border-three"],
+    [class*="umd-layout-grid-border-four"] {
+      container: umd-shell-person-grid-helper / inline-size;
+    }
+
+    /* Responsive cell padding (24px → 32px → 48px) */
+    [class*="umd-layout-grid-border-two"] .umd-shell-person-grid-helper,
+    [class*="umd-layout-grid-border-three"] .umd-shell-person-grid-helper,
+    [class*="umd-layout-grid-border-four"] .umd-shell-person-grid-helper {
+      padding: 24px;
+      transition: padding 0.5s ease-in-out;
+    }
+    @container umd-shell-person-grid-helper (min-width: 650px) {
+      [class*="umd-layout-grid-border-two"] .umd-shell-person-grid-helper,
+      [class*="umd-layout-grid-border-three"] .umd-shell-person-grid-helper,
+      [class*="umd-layout-grid-border-four"] .umd-shell-person-grid-helper {
+        padding: 32px;
+      }
+    }
+    @container umd-shell-person-grid-helper (min-width: 1024px) {
+      [class*="umd-layout-grid-border-two"] .umd-shell-person-grid-helper,
+      [class*="umd-layout-grid-border-three"] .umd-shell-person-grid-helper,
+      [class*="umd-layout-grid-border-four"] .umd-shell-person-grid-helper {
+        padding: 48px;
+      }
+    }
+
+
+    /* ============================================================
+       20. RETIRED — ANIMATION GRID INITIAL STATE
+       As of animation.min.css v1.8.14, upstream guards the
+       .umd-animation-grid > * initial state (opacity: 0 +
+       translateY(50px)) AND the .umd-animation-transition-fade-bottom
+       reveal animation behind @media (prefers-reduced-motion:
+       no-preference), so reduced-motion users never get hidden
+       content — the local duplicate and its reduce-block cancellation
+       are no longer needed. The class still works: keep using
+       .umd-animation-grid on grid wrappers with scripts/
+       grid-animations.js. Section number reserved — do NOT renumber.
+       ============================================================ */
+
+
+    /* ============================================================
+       21. SLIDER OVERFLOW CONTAINMENT
+       umd-element-slider-events (and other carousel/slider components)
+       expand beyond the viewport during transitions, causing horizontal
+       scroll at the document level. overflow: hidden on the section
+       alone is not sufficient.
+
+       clip (not hidden) is intentional: overflow-x: hidden promotes
+       the element to a scroll container, which breaks scroll-driven
+       animations (animation-timeline: scroll()) and shifts
+       IntersectionObserver offsets. overflow-x: clip suppresses
+       the scroll bar without creating a scroll container.
+       ============================================================ */
+    body { overflow-x: clip; }
+
+
+    /* ============================================================
+       22. DARK → LIGHT SECTION TRANSITION GAP
+       When a full-bleed dark section (.umd-layout-background-full-dark)
+       is immediately followed by a default/light section, inject 120px
+       of white breathing room between them.
+
+       Conditional: dark-after-dark gets no extra gap — the adjacent
+       sibling selector only fires when the following section lacks the
+       dark class. Add overflow: hidden to the dark section if its
+       content bleeds into this gap.
+       ============================================================ */
+    .umd-layout-background-full-dark + section:not(.umd-layout-background-full-dark) {
+      margin-top: 120px;
+    }
+
+
+    /* ============================================================
+       23. FILTER BAND COMPANIONS — page-built pieces of the
+       filterable-listing pattern (see LAYOUT-PATTERNS.md "Filter
+       Band"). The band itself uses upstream classes
+       (umd-layout-background-highlight-light, umd-text-line-trailing-
+       light, umd-field-select-wrapper, umd-animation-line-slide-*,
+       sr-only — element/animation/accessibility bundles). Only the
+       search row, results count, and divider list below are absent
+       upstream. Behavior comes from scripts/filter-band.js.
+       ============================================================ */
+    .umd-filter-search-row {
+      display: flex;
+      align-items: stretch;
+    }
+    .umd-filter-search-row input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+      font-size: 16px;
+      line-height: 1.375em;
+      border: 1px solid #c0c0c0;
+      border-right: none;
+      color: #242424;
+      background: #fff;
+      min-width: 0;
+    }
+    .umd-filter-search-row input[type="text"]:focus {
+      outline: 2px solid #E21833;
+      outline-offset: 0;
+    }
+    .umd-filter-search-btn {
+      background-color: #E21833;
+      border: none;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+    .umd-filter-search-btn:hover,
+    .umd-filter-search-btn:focus {
+      background-color: #a90007;
+      outline: none;
+    }
+    .umd-filter-search-btn svg {
+      fill: #fff;
+      width: 20px;
+      height: 20px;
+    }
+    .umd-filter-results-count {
+      font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+      font-size: 14px;
+      color: #454545;
+      margin: 24px 0 0;
+    }
+
+    /* Divider list — zero-gap stack with rules between visible items */
+    .umd-filter-list {
+      gap: 0 !important;
+      margin-top: 56px;
+    }
+    .umd-filter-list > .umd-filter-item {
+      padding-bottom: 24px;
+      border-bottom: 1px solid #d0d0d0;
+    }
+    /* The list owns its rules. When the items are umd-element-card
+       [data-display="list"], the component ALSO puts border-top:1px #E6E6E6 +
+       padding-top:24px on every sibling after the first; that border lands
+       directly against this one's border-bottom and the pair renders as a single
+       doubled 2px rule in two greys. Zero the component's. Specificity has to
+       clear the component rule's 0,2,2 — hence the tag names. */
+    .umd-filter-list > umd-element-card.umd-filter-item
+      + umd-element-card.umd-filter-item {
+      border-top: 0;
+    }
+    .umd-filter-list > .umd-filter-item + .umd-filter-item {
+      padding-top: 24px;
+    }
+    .umd-filter-list > .umd-filter-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .umd-filter-list > .umd-filter-item[hidden] + .umd-filter-item {
+      padding-top: 0;
+    }
+    .umd-filter-item[hidden] { display: none !important; }
+
+
+    /* ============================================================
+       24. PILL LIST ANCHOR COLOR — upstream gap-fill
+
+       element.min.css styles .umd-text-cluster-pill (deprecated alias
+       .umd-pill-list) with a chip ground, box model, 12px Interstate and a
+       #FFD200 hover on <a> children — but the LIGHT variant never declares
+       `color`, so an anchor chip falls through to the browser's default
+       blue/purple and keeps its UA underline. The DARK variant DOES declare
+       one (color:#FFFFFF on the child, #000000 on hover), so this is an
+       asymmetry in the package, not an implied black.
+
+       Same shape as §11: upstream styles a wrapper that this composition
+       does not use, and a bare <a> is left unstyled. Loads after the CDN
+       bundles, so equal specificity is enough; the tag selector adds one
+       anyway. Scoped to the light class names, so the dark variant's white
+       is untouched.
+
+       RETIRE THIS when composePill()'s light branch gains
+       `color: color.black` — packages/styles/source/element/text/cluster.ts.
+       ============================================================ */
+    :is(.umd-text-cluster-pill, .umd-pill-list) > a {
+      color: #000000;
+      text-decoration: none;
+    }
+  </style>
+
+  <script src="https://unpkg.com/@universityofmaryland/web-components-library@2.0.0/dist/cdn.js"></script>
+  <!-- SHARED:gate:START — generated from shared/gate.html; do not edit here -->
+  <!-- ============================================================
+       PROTOTYPE ACCESS GATE
+       Inlined into the <head> of every page by
+       page-builder/tools/build-chrome.py. Edit here, not in pages/*.html.
+
+       Keeps a GitHub Pages prototype blank for anyone without the shared
+       credentials, and — with the noindex meta chrome.py stamps into every
+       page — out of search results.
+
+       It is NOT access control. The whole check ships to the browser, so the
+       markup is retrievable with `curl` and the hash can be attacked offline.
+       Keep the project repo PRIVATE and put nothing behind it that would
+       matter if it leaked. See page-builder/scripts/gate.js for the full
+       reasoning.
+
+       DELETE THIS FILE on a project that should be public — the inliner skips
+       a region whose source file is absent, and the next build-chrome.py run
+       strips the block back out of every page.
+
+       ADD AN ACCOUNT — never type a password into this file by hand:
+
+           python3 page-builder/tools/gate.py --write shared/gate.html
+
+       That prompts for the username and password without echoing them, and
+       rewrites the block between the GATE:USERS markers below. The plaintext
+       password is never written to this repo.
+  ============================================================ -->
+  <style>
+    /* The lock is CSS, not JavaScript, and it is unconditional: the page is
+       hidden from the first paint and STAYS hidden if gate.js 404s, throws,
+       or scripting is off. gate.js adds .umd-gate-unlocked only after a
+       password verifies. Do not move this into a JS-added class — that
+       inverts it into fail-open. */
+    html:not(.umd-gate-unlocked) { overflow: hidden; }
+    html:not(.umd-gate-unlocked) body { visibility: hidden; }
+    html:not(.umd-gate-unlocked) body > .umd-gate { visibility: visible; }
+
+    .umd-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+      background: #000;
+      font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+    }
+
+    .umd-gate__panel {
+      width: 100%;
+      max-width: 420px;
+      margin: auto;
+      padding: 40px 32px;
+      background: #1a1a1a;
+      border-top: 4px solid #e21833;
+      color: #fff;
+      text-align: left;
+    }
+
+    .umd-gate__eyebrow {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #ffd200;
+    }
+
+    .umd-gate__title {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .umd-gate__message {
+      margin: 0 0 24px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #d1d1d1;
+    }
+
+    .umd-gate__label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e6e6e6;
+    }
+
+    .umd-gate__input {
+      display: block;
+      width: 100%;
+      margin-bottom: 16px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 16px;   /* below 16px, iOS Safari zooms the page on focus */
+      color: #000;
+      background: #fff;
+      border: 1px solid #757575;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .umd-gate__input:focus-visible {
+      outline: 2px solid #ffd200;
+      outline-offset: 2px;
+    }
+
+    .umd-gate__submit {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #e21833;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .umd-gate__submit:hover { background: #c1152b; }
+    .umd-gate__submit:disabled { background: #757575; cursor: default; }
+    .umd-gate__submit:focus-visible { outline: 2px solid #ffd200; outline-offset: 2px; }
+
+    /* Always in the layout, so filling it in on a failed attempt does not
+       shove the button out from under the cursor. */
+    .umd-gate__error {
+      min-height: 20px;
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 20px;
+      color: #ff9a9a;
+    }
+
+    .umd-gate__note {
+      margin: 16px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #a8a8a8;
+    }
+
+    /* gate.js never arrived — say so, rather than leaving a blank page that
+       looks like a broken deploy. Still locked: the rule above is untouched. */
+    html.umd-gate-error body::before {
+      content: "This prototype could not load its sign-in. Check that page-builder/scripts/gate.js is published alongside the site.";
+      visibility: visible;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: #000;
+      color: #fff;
+      font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: center;
+    }
+  </style>
+  <noscript>
+    <style>
+      html:not(.umd-gate-unlocked) body::before {
+        content: "This prototype requires JavaScript to sign in.";
+        visibility: visible;
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: #000;
+        color: #fff;
+        font-family: Interstate, Helvetica, Arial, Verdana, sans-serif;
+        font-size: 16px;
+        text-align: center;
+      }
+    </style>
+  </noscript>
+  <script>
+    window.UMD_GATE = {
+      title: 'This prototype is private',
+      message: 'Sign in with the credentials shared with you to view this preview.',
+      note: 'Trouble signing in? Contact the project team.',
+
+      /* 0 = this browser tab only. Otherwise the sign-in carries across tabs
+         and pages for this many hours, so a reviewer opening links in new
+         tabs is not asked again. */
+      rememberHours: 12,
+
+      /* PBKDF2 rounds. Must match what tools/gate.py used to make the hashes
+         below — change it and every account stops verifying. */
+      iterations: 310000,
+
+      /* GATE:USERS:START — written by page-builder/tools/gate.py; do not hand-edit */
+      users: [
+        { "user": "WebServices", "salt": "5a93279dee761d80ba3248862508ae49", "hash": "bd591fe7b960965ba6e69917c307bc20b2adbc6f48c7fae4296fe19be605be2d" }
+      ]
+      /* GATE:USERS:END */
+    };
+  </script>
+  <script src="../../page-builder/scripts/gate.js"
+          onerror="document.documentElement.classList.add('umd-gate-error')" defer></script>
+  <!-- SHARED:gate:END -->
+</head>
+<body>
+
+  <!-- ========================================
+       1. GLOBAL UNIVERSITY HEADER
+       Hardcoded. Never modified. Zero config.
+  ======================================== -->
+  <!-- SHARED:header:START — generated from shared/header.html; do not edit here -->
+  <umd-element-navigation-utility data-layout-lock="large" role="navigation" aria-label="Utility navigation"></umd-element-navigation-utility>
+
+  <!-- Mirrors the live brand.umd.edu header (no CTA, no utility row, UMD search).
+       The site is complete and lives at brand.umd.edu; this project builds only
+       pages under Trademarks & Licensing. Every nav link points to the LIVE page
+       except the ones this project builds, which use ../../. -->
+  <umd-element-navigation-header
+    sticky
+    class="umd-layout-space-horizontal-full"
+    search-url="https://search.umd.edu">
+    <a slot="logo" href="https://brand.umd.edu/" aria-label="Brand">
+      <!-- Full-color (red + black) logo downloaded from brand.umd.edu. The
+           onerror fallback is mandatory — the component renders a broken <img>
+           rather than falling back on its own. -->
+      <img src="../../images/logos/brand-site-logo.svg"
+           alt="Maryland Brand"
+           onerror="this.onerror=null;this.src='../../page-builder/images/logos/primary-logo-dark.svg';" />
+    </a>
+
+    <nav slot="main-navigation">
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/brand-platform">Brand Platform</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/brand-platform" aria-label="Brand Platform">Overview</a>
+          <a href="https://brand.umd.edu/brand-platform/campaigns-initiatives">Campaigns &amp; Initiatives</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/visual-identity">Visual Identity</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/visual-identity" aria-label="Visual Identity">Overview</a>
+          <a href="https://brand.umd.edu/visual-identity/logos">Logos</a>
+          <a href="https://brand.umd.edu/visual-identity/colors">Colors</a>
+          <a href="https://brand.umd.edu/visual-identity/typography">Typography</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/applying-the-brand">Applying the Brand</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/applying-the-brand" aria-label="Applying the Brand">Overview</a>
+          <a href="https://brand.umd.edu/applying-the-brand/editorial">Editorial</a>
+          <a href="https://brand.umd.edu/applying-the-brand/email">Email</a>
+          <a href="https://brand.umd.edu/applying-the-brand/environmental">Environmental</a>
+          <a href="https://brand.umd.edu/applying-the-brand/events">Events</a>
+          <a href="https://brand.umd.edu/applying-the-brand/photography">Photography</a>
+          <a href="https://brand.umd.edu/applying-the-brand/promotional-items">Promotional Items</a>
+          <a href="https://brand.umd.edu/applying-the-brand/editorial/maryland-today">Storytelling</a>
+          <a href="https://brand.umd.edu/applying-the-brand/videography">Videography</a>
+          <a href="https://brand.umd.edu/applying-the-brand/web">Web</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/resources-support">Resources &amp; Support</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/resources-support" aria-label="Resources &amp; Support">Overview</a>
+          <a href="https://brand.umd.edu/resources-support/accessibility">Accessibility</a>
+          <a href="https://brand.umd.edu/resources-support/artificial-intelligence">Artificial Intelligence</a>
+          <a href="https://brand.umd.edu/resources-support/brand-checklists">Brand Checklists</a>
+          <a href="https://brand.umd.edu/resources-support/communicators-group">Communicators Group</a>
+          <a href="https://brand.umd.edu/resources-support/media-policy">Media Policy</a>
+          <a href="https://brand.umd.edu/resources-support/request-support">Request Support</a>
+          <a href="https://brand.umd.edu/resources-support/social-media-guidelines">Social Media</a>
+        </div>
+      </umd-element-nav-item>
+      <umd-element-nav-item>
+        <a slot="primary-link" href="https://brand.umd.edu/trademarks-licensing">Trademarks &amp; Licensing</a>
+        <div slot="dropdown-links">
+          <a href="https://brand.umd.edu/trademarks-licensing" aria-label="Trademarks &amp; Licensing">Overview</a>
+          <a href="https://brand.umd.edu/trademarks-licensing/maryland-trademarks">Maryland Trademarks</a>
+          <a href="https://brand.umd.edu/trademarks-licensing/for-vendors">For Vendors</a>
+          <a href="https://brand.umd.edu/trademarks-licensing/for-campus">For Campus</a>
+          <a href="../../pages/trademarks-licensing/vendor-search.html">Vendor Search</a>
+        </div>
+      </umd-element-nav-item>
+    </nav>
+
+    <!-- DRAWER:START — mobile / compact navigation.
+         All drawer slots must be DIRECT children of umd-element-navigation-header
+         and every link text needs its own <span>.
+
+         data-child-ref / data-parent-ref values are the section DIRECTORY names
+         under pages/ (only trademarks-licensing exists locally; the others are
+         live sections, named the same way so a page added later just works). -->
+    <div slot="primary-slide-links">
+      <a href="https://brand.umd.edu/brand-platform" data-child-ref="brand-platform"><span>Brand Platform</span></a>
+      <a href="https://brand.umd.edu/visual-identity" data-child-ref="visual-identity"><span>Visual Identity</span></a>
+      <a href="https://brand.umd.edu/applying-the-brand" data-child-ref="applying-the-brand"><span>Applying the Brand</span></a>
+      <a href="https://brand.umd.edu/resources-support" data-child-ref="resources-support"><span>Resources &amp; Support</span></a>
+      <a href="https://brand.umd.edu/trademarks-licensing" data-child-ref="trademarks-licensing"><span>Trademarks &amp; Licensing</span></a>
+    </div>
+
+    <div slot="children-slides">
+      <div data-parent-ref="brand-platform">
+        <a href="https://brand.umd.edu/brand-platform/campaigns-initiatives"><span>Campaigns &amp; Initiatives</span></a>
+      </div>
+      <div data-parent-ref="visual-identity">
+        <a href="https://brand.umd.edu/visual-identity/logos"><span>Logos</span></a>
+        <a href="https://brand.umd.edu/visual-identity/colors"><span>Colors</span></a>
+        <a href="https://brand.umd.edu/visual-identity/typography"><span>Typography</span></a>
+      </div>
+      <div data-parent-ref="applying-the-brand">
+        <a href="https://brand.umd.edu/applying-the-brand/editorial"><span>Editorial</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/email"><span>Email</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/environmental"><span>Environmental</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/events"><span>Events</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/photography"><span>Photography</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/promotional-items"><span>Promotional Items</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/editorial/maryland-today"><span>Storytelling</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/videography"><span>Videography</span></a>
+        <a href="https://brand.umd.edu/applying-the-brand/web"><span>Web</span></a>
+      </div>
+      <div data-parent-ref="resources-support">
+        <a href="https://brand.umd.edu/resources-support/accessibility"><span>Accessibility</span></a>
+        <a href="https://brand.umd.edu/resources-support/artificial-intelligence"><span>Artificial Intelligence</span></a>
+        <a href="https://brand.umd.edu/resources-support/brand-checklists"><span>Brand Checklists</span></a>
+        <a href="https://brand.umd.edu/resources-support/communicators-group"><span>Communicators Group</span></a>
+        <a href="https://brand.umd.edu/resources-support/media-policy"><span>Media Policy</span></a>
+        <a href="https://brand.umd.edu/resources-support/request-support"><span>Request Support</span></a>
+        <a href="https://brand.umd.edu/resources-support/social-media-guidelines"><span>Social Media</span></a>
+      </div>
+      <div data-parent-ref="trademarks-licensing" data-active>
+        <a href="https://brand.umd.edu/trademarks-licensing/maryland-trademarks"><span>Maryland Trademarks</span></a>
+        <a href="https://brand.umd.edu/trademarks-licensing/for-vendors"><span>For Vendors</span></a>
+        <a href="https://brand.umd.edu/trademarks-licensing/for-campus"><span>For Campus</span></a>
+        <a href="../../pages/trademarks-licensing/vendor-search.html" data-selected><span>Vendor Search</span></a>
+      </div>
+    </div>
+    <!-- DRAWER:END -->
+  </umd-element-navigation-header>
+  <!-- SHARED:header:END -->
+
+  <!-- ========================================
+       3. PAGE CONTENT
+       Replace the sections below with actual content.
+       Use umd-layout-vertical-landing on each <section>.
+       Use umd-layout-space-horizontal-* wrappers for content width.
+  ======================================== -->
+
+  <!-- HERO SECTION (if needed) -->
+  <!--
+  <section class="umd-layout-vertical-landing">
+    <umd-element-hero data-display="stacked">
+      <h1 slot="headline">{{HEADLINE}}</h1>
+      <p slot="text">{{SUBHEAD}}</p>
+      <img slot="image" src="{{IMAGE_URL}}" alt="{{IMAGE_ALT}}" />
+      <umd-element-call-to-action data-display="primary" slot="actions">
+        <a href="{{CTA_URL}}">{{CTA_TEXT}}</a>
+      </umd-element-call-to-action>
+    </umd-element-hero>
+  </section>
+  -->
+
+  <!-- CONTENT SECTION EXAMPLE -->
+  <!--
+  <section class="umd-layout-vertical-landing">
+    <div class="umd-layout-space-horizontal-larger">
+      <umd-element-section-intro-wide>
+        <h2 slot="headline">{{SECTION_TITLE}}</h2>
+        <umd-element-call-to-action data-display="secondary" slot="actions">
+          <a href="{{LINK}}">{{LINK_TEXT}}</a>
+        </umd-element-call-to-action>
+      </umd-element-section-intro-wide>
+    </div>
+  </section>
+  -->
+
+  <!-- PATHWAY EXAMPLE (standard — requires dark wrapper) -->
+  <!--
+  <section class="umd-layout-vertical-landing" style="background: #000;">
+    <umd-element-pathway data-theme="dark">
+      <h2 slot="headline">{{HEADLINE}}</h2>
+      <p slot="text">{{BODY_TEXT}}</p>
+      <img slot="image" src="{{IMAGE_URL}}" alt="{{IMAGE_ALT}}" />
+      <umd-element-call-to-action data-display="primary" data-theme="dark" slot="actions">
+        <a href="{{CTA_URL}}">{{CTA_TEXT}}</a>
+      </umd-element-call-to-action>
+    </umd-element-pathway>
+  </section>
+  -->
+
+  <!-- ========================================
+       4. FOOTER
+       Visual footer with campus background image.
+       Default image: ../images/large/campus/footer-campus.jpg
+  ======================================== -->
+  <!-- SHARED:footer:START — generated from shared/footer.html; do not edit here -->
+  <!-- Mirrors the live brand.umd.edu simple footer: no logo slot, no imagery.
+       Social links are bare <a>s — the DS swaps in the icon from the URL. -->
+  <umd-element-footer data-display="simple">
+    <p slot="contact-headline">Office of Marketing and Communications</p>
+    <address slot="address">
+      <span>2101 Turner Hall</span>
+      <span>College Park, MD 20742</span>
+    </address>
+    <div slot="contact-links">
+      <a href="mailto:omc@umd.edu" aria-label="Email: omc@umd.edu"><span aria-hidden="true">omc@umd.edu</span></a>
+    </div>
+    <div slot="social-links">
+      <a href="https://www.youtube.com/user/UMD2101" rel="noopener noreferrer" aria-label="YouTube" target="_blank">YouTube</a>
+      <a href="https://www.facebook.com/UnivofMaryland" rel="noopener noreferrer" aria-label="Facebook" target="_blank">Facebook</a>
+      <a href="https://www.instagram.com/univofmaryland" rel="noopener noreferrer" aria-label="Instagram" target="_blank">Instagram</a>
+      <a href="https://www.linkedin.com/school/university-of-maryland/" rel="noopener noreferrer" aria-label="LinkedIn" target="_blank">LinkedIn</a>
+    </div>
+    <div slot="utility-links">
+      <a href="https://omc.umd.edu/" rel="noopener noreferrer" target="_blank"><span>Office of Marketing and Communications</span></a>
+    </div>
+  </umd-element-footer>
+  <!-- SHARED:footer:END -->
+
+  <!-- ========================================
+       GRID ENTRY ANIMATIONS
+       On by default for all layout grid utilities — children fade
+       in from below when the grid enters the viewport, with a
+       cumulative 100ms stagger; row-mates land together.
+       Bails out under prefers-reduced-motion: reduce.
+
+       OPT OUT per grid by adding data-animation="off" on the grid
+       container (e.g. for single-row CTA rows or stacks where the
+       fade reads as noise).
+  ======================================== -->
+  <!-- SHARED:page-scripts:START — generated from shared/page-scripts.html; do not edit here -->
+  <!-- ============================================================
+       SHARED PAGE SCRIPTS — end-of-body script tags every page loads.
+       Inlined into every page by page-builder/tools/build-chrome.py.
+       Edit here, not in pages/*.html.
+
+       These are the canonical shared implementations in
+       page-builder/scripts/. NEVER paste one inline — every page must
+       share one implementation, and an inlined copy goes stale the
+       moment the submodule moves.
+
+       The ../../ token is what makes this safe across depths.
+       TEMPLATE.html ships src="../scripts/grid-animations.js", which is
+       correct only for a page inside the page-builder repo's own test/
+       directory; in a project it must resolve to page-builder/scripts/,
+       one extra ../ deeper for a page in a section folder. Hand-editing
+       that path is how it ends up 404ing on half the site.
+
+       Add filter-band.js only on projects using the Filter Band pattern
+       (page-builder/LAYOUT-PATTERNS.md).
+  ============================================================ -->
+  <script src="../../page-builder/scripts/grid-animations.js"></script>
+  <!-- SHARED:page-scripts:END -->
+
+</body>
+</html>
