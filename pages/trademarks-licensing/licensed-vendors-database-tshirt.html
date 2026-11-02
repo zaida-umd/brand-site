@@ -942,6 +942,9 @@
     }
 
     /* "Show all" collapses the vendor list */
+    /* the lone fundraiser checkbox has no accordion header to clear */
+    .umd-brand-site-filter-group-standalone fieldset { padding-top:0; }
+
     .umd-brand-site-filter-group-body fieldset[data-collapsed] .umd-brand-site-filter-option-extra { display:none; }
 
     .umd-brand-site-filter-show-all-cluster.umd-text-cluster-pill { display:inline-flex; margin-top:8px; }
@@ -1020,6 +1023,69 @@
     @media (min-width:1024px) { .umd-brand-site-filter-list { margin-top:56px; } }
 
     .umd-brand-site-filter-empty { font-size:18px; margin-top:var(--umd-space-lg); }
+
+    /* Pager: the umd-shell-pagination pattern, restated from the rules
+       today.umd.edu serves. No web-styles-library bundle ships umd-shell-*;
+       it belongs to the CMS shell layer. Page actions are buttons here because
+       paging is client-side, so the source's [href] hover becomes plain :hover. */
+    .umd-brand-site-filter-results { scroll-margin-top:var(--umd-space-max); }
+
+    .umd-brand-site-filter-list:focus { outline:0; }   /* takes focus after a page change */
+
+    .umd-shell-pagination { margin-top:var(--umd-space-xl); }
+
+    .umd-shell-pagination > div {
+      display:flex; align-items:center; justify-content:center; gap:var(--umd-space-min);
+      margin:0 auto; padding:0; max-width:800px;
+      font-family:Interstate, Helvetica, Arial, Verdana, sans-serif; font-size:16px; line-height:1em;
+    }
+
+    @media (min-width:650px) { .umd-shell-pagination > div { font-size:calc(16px + .16vw); } }
+
+    @media (min-width:1024px) { .umd-shell-pagination > div { font-size:18px; font-weight:700; letter-spacing:-.01em; } }
+
+    .umd-shell-pagination-stepper-action {
+      flex:0 0 auto; width:40px; height:40px; padding:12px; border:0; cursor:pointer;
+      background-color:var(--umd-color-black); color:var(--umd-color-white);
+      transition:background .5s, color .5s;
+    }
+
+    .umd-shell-pagination-stepper-action:hover,
+    .umd-shell-pagination-stepper-action:focus-visible { background-color:var(--umd-color-red); }
+
+    .umd-shell-pagination-stepper-action svg { display:block; width:100%; height:100%; fill:var(--umd-color-white); }
+
+    .umd-shell-pagination-stepper-action:first-child svg { transform:rotate(180deg); }
+
+    .umd-shell-pagination-stepper-action[disabled] { cursor:default; background-color:var(--umd-color-gray-light); }
+
+    .umd-shell-pagination-list { display:flex; align-items:center; justify-content:center; gap:var(--umd-space-min); }
+
+    .umd-shell-pagination-current,
+    .umd-shell-pagination-page-action {
+      display:flex; align-items:center; justify-content:center;
+      height:40px; min-width:40px; padding:var(--umd-space-min);
+      background-color:var(--umd-color-white); color:var(--umd-color-black);
+      border:1px solid var(--umd-color-gray-light);
+      font:inherit; letter-spacing:inherit;
+      transition:background .5s, border .5s, color .5s;
+    }
+
+    .umd-shell-pagination-current { border:2px solid var(--umd-color-black); }
+
+    .umd-shell-pagination-page-action { cursor:pointer; }
+
+    .umd-shell-pagination-page-action:hover,
+    .umd-shell-pagination-page-action:focus-visible {
+      background-color:var(--umd-color-red); border:1px solid var(--umd-color-red); color:var(--umd-color-white);
+    }
+
+    /* below 650px the source keeps only the steppers and the current page */
+    .umd-shell-pagination-ellipsis, .umd-shell-pagination-page-action { display:none; }
+
+    @media (min-width:650px) {
+      .umd-shell-pagination-ellipsis, .umd-shell-pagination-page-action { display:flex; }
+    }
   </style>
 
   <script src="https://unpkg.com/@universityofmaryland/web-components-library@2.0.0/dist/cdn.js"></script>
@@ -1435,8 +1501,9 @@
       <div class="umd-brand-site-filter-results">
         <div class="umd-brand-site-filter-pills" id="umd-brand-site-filter-pills" hidden></div>
         <p class="umd-brand-site-filter-count-line umd-sans-small" id="umd-brand-site-filter-count" role="status" aria-live="polite"></p>
-        <div class="umd-brand-site-filter-list" id="umd-brand-site-filter-list"></div>
+        <div class="umd-brand-site-filter-list" id="umd-brand-site-filter-list" tabindex="-1"></div>
         <p id="umd-brand-site-filter-empty" class="umd-brand-site-filter-empty" hidden>No licensed vendors match your search. Try a different keyword or remove a filter.</p>
+        <nav class="umd-shell-pagination" id="umd-brand-site-filter-pager" aria-label="Licensed vendors pagination" hidden></nav>
       </div>
 
     </div>

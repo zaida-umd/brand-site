@@ -46,7 +46,13 @@
     'Licensing': ['royalty', 'royalties', 'premium']
   };
 
+  // Vendor Name filter is hidden because the keyword search already finds vendors.
+  // Removal is not yet confirmed: set this to true to bring the filter back.
+  var SHOW_VENDOR_FILTER = false;
+
   var SHOW_LIMIT = 7;
+  var PER_PAGE = 15;
+  var PAGER_ALL_UP_TO = 7;   // more pages than this and the pager windows with ellipses
 
   var form = document.getElementById('umd-brand-site-filter-form');
   var qInput = document.getElementById('umd-brand-site-filter-keyword');
@@ -56,8 +62,10 @@
   var countEl = document.getElementById('umd-brand-site-filter-count');
   var pillsHost = document.getElementById('umd-brand-site-filter-pills');
   var mobileToggle = document.getElementById('umd-brand-site-filter-mobile-toggle');
+  var pagerEl = document.getElementById('umd-brand-site-filter-pager');
+  var resultsEl = document.querySelector('.umd-brand-site-filter-results');
 
-  var state = { q: '', category: [], vendor: [], fundraiser: [] };
+  var state = { q: '', category: [], vendor: [], fundraiser: [], page: 1 };
 
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -128,18 +136,21 @@
       'Show all ' + VENDORS.length + '</button></span>';
   }
 
+  // A lone checkbox with no accordion header: the same group markup, always open
   function fundraiserGroup() {
-    return '<fieldset><legend class="sr-only">Internal fundraiser</legend>' +
+    return '<div class="umd-brand-site-filter-group umd-brand-site-filter-group-standalone" data-open data-group="fundraiser">' +
+      '<div class="umd-brand-site-filter-group-body"><div>' +
+      '<fieldset><legend class="sr-only">Internal fundraiser</legend>' +
       checkbox('fundraiser', 'yes', 'Approved for internal fundraisers',
         countWith(function (v) { return v.fundraiser; })) +
-      '</fieldset>';
+      '</fieldset></div></div></div>';
   }
 
   function buildGroups() {
     groupsHost.innerHTML =
       group('category', 'Product Categories', true, categoryGroup()) +
-      group('vendor', 'Vendor Name', false, vendorGroup()) +
-      group('fundraiser', 'Internal Fundraiser', false, fundraiserGroup());
+      (SHOW_VENDOR_FILTER ? group('vendor', 'Vendor Name', false, vendorGroup()) : '') +
+      fundraiserGroup();
   }
 
   // parent bucket box mirrors its children: all → checked, some → indeterminate
@@ -186,16 +197,16 @@
   }
 
   // ---- results -----------------------------------------------------------
-  // The DS tabular person card, unaltered: led by the contact person, with the
-  // vendor as their association. No wrapper classes — the card draws its own rules.
+  // The DS tabular person card, unaltered: led by the vendor, with the contact
+  // person as the association. No wrapper classes — the card draws its own rules.
   // The vendor website is the card's link, in slot="actions" (rendered under
   // the person details). Fundraiser status uses the card's italic line
   // (slot="pronouns"); slot="additional-contact" is never rendered as of
   // components 2.0.0.
   function cardHTML(v) {
     return '<umd-element-person data-display="tabular">' +
-      '<p slot="name">' + esc(v.contact || v.name) + '</p>' +
-      '<p slot="association">' + esc(v.name) + '</p>' +
+      '<p slot="name">' + esc(v.name) + '</p>' +
+      (v.contact ? '<p slot="association">' + esc(v.contact) + '</p>' : '') +
       (v.fundraiser ? '<p slot="pronouns">Approved for internal fundraisers</p>' : '') +
       (v.phone ? '<a slot="phone" href="tel:' + esc(v.tel) + '">' + esc(v.phone) + '</a>' : '') +
       (v.email ? '<a slot="email" href="mailto:' + esc(v.email) + '">' + esc(v.email) + '</a>' : '') +
@@ -213,13 +224,63 @@
 
     listHost.replaceChildren();
     var holder = document.createElement('div');            // detached: no upgrade until appended
-    holder.innerHTML = matched.map(cardHTML).join('');
+    var pages = Math.max(1, Math.ceil(matched.length / PER_PAGE));
+    state.page = Math.min(state.page, pages);
+    var start = (state.page - 1) * PER_PAGE;
+    holder.innerHTML = matched.slice(start, start + PER_PAGE).map(cardHTML).join('');
     while (holder.firstElementChild) listHost.appendChild(holder.firstElementChild);
     emptyEl.hidden = matched.length > 0;
 
     var noun = matched.length === 1 ? ' licensed vendor' : ' licensed vendors';
     countEl.textContent = 'Showing ' + matched.length + noun;
+    renderPager(pages);
     renderPills();
+  }
+
+  // ---- pager -------------------------------------------------------------
+  // Same arrow today.umd.edu uses; the CSS rotates it for the previous stepper.
+  var ARROW = '<svg aria-hidden="true" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">' +
+    '<path fill-rule="evenodd" clip-rule="evenodd" d="M63.0351 40L36 13H60.214L95.5269 47.539L95.1858 ' +
+    '47.8801L95.5269 48.2212L60.214 82.7602H36L62.795 56H5V40H63.0351Z"></path></svg>';
+
+  function stepper(target, pages, label, offLabel) {
+    var off = target < 1 || target > pages;
+    return '<button type="button" class="umd-shell-pagination-stepper-action"' +
+      (off ? ' disabled' : ' data-page="' + target + '"') +
+      ' aria-label="' + (off ? offLabel : label) + '">' + ARROW + '</button>';
+  }
+
+  function pageBox(n, pages) {
+    if (n === state.page) {
+      return '<span class="umd-shell-pagination-current" aria-current="page">' + n + '</span>';
+    }
+    return '<button type="button" class="umd-shell-pagination-page-action" data-page="' + n +
+      '" aria-label="View page ' + n + ' of ' + pages + '"><span aria-hidden="true">' + n + '</span></button>';
+  }
+
+  // Every page when they fit; otherwise first, current and neighbours, last.
+  function pageNumbers(pages) {
+    var nums = [];
+    for (var n = 1; n <= pages; n++) {
+      if (pages <= PAGER_ALL_UP_TO || n === 1 || n === pages || Math.abs(n - state.page) <= 1) nums.push(n);
+    }
+    return nums;
+  }
+
+  function renderPager(pages) {
+    pagerEl.hidden = pages < 2;
+    if (pagerEl.hidden) { pagerEl.innerHTML = ''; return; }
+    var boxes = '';
+    pageNumbers(pages).forEach(function (n, i, nums) {
+      if (i && n - nums[i - 1] > 1) boxes += '<span aria-hidden="true" class="umd-shell-pagination-ellipsis">…</span>';
+      boxes += pageBox(n, pages);
+    });
+    pagerEl.innerHTML = '<span class="sr-only">Page ' + state.page + ' of ' + pages + '</span>' +
+      '<div class="umd-shell-pagination-wrapper">' +
+      stepper(state.page - 1, pages, 'Go to the previous page', 'No more previous pages') +
+      '<div class="umd-shell-pagination-list">' + boxes + '</div>' +
+      stepper(state.page + 1, pages, 'Advance to the next page', 'No more pages') +
+      '</div>';
   }
 
   function renderPills() {
@@ -240,7 +301,8 @@
       '<button type="button" class="umd-brand-site-filter-clear umd-sans-min" data-clear-all>Clear all</button>';
   }
 
-  function update() { collect(); render(); }
+  // Any change to the search or filters starts the results over at page 1
+  function update() { state.page = 1; collect(); render(); }
 
   function clearAll() {
     form.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
@@ -310,6 +372,17 @@
       syncBuckets();
     }
     update();
+  });
+
+  // The clicked button is replaced by the re-render, so focus moves to the new
+  // results rather than falling back to <body>.
+  pagerEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-page]');
+    if (!btn) return;
+    state.page = parseInt(btn.getAttribute('data-page'), 10);
+    render();
+    listHost.focus({ preventScroll: true });
+    resultsEl.scrollIntoView();
   });
 
   mobileToggle.addEventListener('click', function () {

@@ -47,13 +47,16 @@ checkboxes (`-bucket`, `-bucket-row`, `-bucket-toggle`, `-bucket-children`). It 
 results are unaltered tabular person cards, which draw their own rules. Behavior is in
 `scripts/licensed-vendors-database.js`.
 
+The Vendor Name group is hidden, not removed (`SHOW_VENDOR_FILTER` in that script),
+because the keyword search covers it and removal is not yet confirmed.
+
 Two projects now hand-roll the same rail under different namespaces. If a third
 project needs it, promote it to `page-builder` (LAYOUT-PATTERNS.md + a shared
 script) rather than copying it again.
 
 ### `umd-element-person data-display="tabular"` — fundraiser status in the italic `slot="pronouns"`
-Same pages. Cards are the DS tabular person card, unaltered, led by the contact
-person with the vendor in `slot="association"` and the vendor website as a
+Same pages. Cards are the DS tabular person card, unaltered, led by the vendor in
+`slot="name"` with the contact person in `slot="association"` and the vendor website as a
 secondary call-to-action in `slot="actions"`. "Approved for internal fundraisers" uses
 the italic `slot="pronouns"` line. (As of components 2.0.0 the contact lockup
 accepts `slot="additional-contact"` but never renders it, in any display.)
@@ -63,3 +66,15 @@ Same pages, scoped to `.umd-brand-site-filter-search`. The DS icon sits in a 32p
 box; this page sets the icon to 24px (`--umd-space-md`) with a 32px hover square
 (`--umd-space-lg`), both centered in the field. The icon artwork and hover colors
 are the DS's, unchanged.
+
+### `umd-shell-pagination*` — numbered results pager
+Same pages. 15 vendors per page, reset to page 1 by any search or filter change.
+No `web-styles-library` bundle ships `umd-shell-*`; the pattern belongs to the CMS
+shell layer. The rules are restated in each page's `<style>` from what
+`today.umd.edu/tags/athletics` serves, including its under-650px behavior (steppers
+and current page only). Page actions are `<button>`s rather than `<a href>` because
+paging is client-side. The design system's own pagination is the feeds package's
+"Load more" button, a different pattern.
+
+admissions-design restated this pager once too (since removed from its calendar).
+If another project needs it, promote it to `page-builder` rather than copying it.
