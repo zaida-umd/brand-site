@@ -895,10 +895,15 @@
 
     /* the DS search icon at 24px, centered in the field. Its icon and hover
        state come from the DS unchanged. */
-    .umd-brand-site-filter-search .umd-field-input-search-wrapper::before,
     .umd-brand-site-filter-search .umd-field-input-search-wrapper::after {
       width:var(--umd-space-md); height:var(--umd-space-md); padding:0;
       top:calc(50% - var(--umd-space-md) / 2); bottom:auto; right:var(--umd-space-xs);
+    }
+
+    /* the hover square: 4px larger than the icon on every side */
+    .umd-brand-site-filter-search .umd-field-input-search-wrapper::before {
+      width:var(--umd-space-lg); height:var(--umd-space-lg); padding:0;
+      top:calc(50% - var(--umd-space-lg) / 2); bottom:auto; right:var(--umd-space-min);
     }
 
 

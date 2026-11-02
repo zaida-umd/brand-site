@@ -60,5 +60,6 @@ accepts `slot="additional-contact"` but never renders it, in any display.)
 
 ### `umd-field-input-search-wrapper` — 24px search icon
 Same pages, scoped to `.umd-brand-site-filter-search`. The DS icon sits in a 32px
-box; this page resizes the box to 24px (`--umd-space-md`) and centers it in the
-field. The icon itself and its hover state are the DS's, unchanged.
+box; this page sets the icon to 24px (`--umd-space-md`) with a 32px hover square
+(`--umd-space-lg`), both centered in the field. The icon artwork and hover colors
+are the DS's, unchanged.
