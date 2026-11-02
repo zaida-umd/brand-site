@@ -41,14 +41,13 @@ DS counterpart: none. The DS has the Filter Band (a horizontal select + search
 panel, critical.css §23) but no faceted left rail. This rail is the
 admissions-design programs explorer (`umd-admissions-filter-*`), renamespaced,
 with the keyword search moved into the rail and nested bucket → category
-checkboxes (`-bucket`, `-bucket-row`, `-bucket-toggle`, `-bucket-children`) plus a
-type-ahead inside the Vendor Name group (`-group-find`). It reuses the DS
-`umd-field-checkbox-wrapper`, `umd-text-cluster-pill`,
-`umd-layout-background-highlight-light` and `umd-text-line-trailing`; the
+checkboxes (`-bucket`, `-bucket-row`, `-bucket-toggle`, `-bucket-children`). It reuses the DS
+`umd-field-checkbox-wrapper`, `umd-field-input`, `umd-text-cluster-pill` and
+`umd-text-line-trailing`; the
 results are unaltered tabular person cards, which draw their own rules. Behavior is in
 `scripts/licensed-vendors-database.js`.
 
-Two people now hand-roll the same rail under different namespaces. If a third
+Two projects now hand-roll the same rail under different namespaces. If a third
 project needs it, promote it to `page-builder` (LAYOUT-PATTERNS.md + a shared
 script) rather than copying it again.
 

@@ -936,15 +936,8 @@
       border:0; margin:0; padding:18px 0 2px; display:flex; flex-direction:column; gap:14px;
     }
 
-    .umd-brand-site-filter-group-find { padding-top:18px; }
-
-    .umd-brand-site-filter-group-find + fieldset { padding-top:16px; }
-
-    /* "Show all" collapses the vendor list; it steps aside while the
-       type-ahead is narrowing the list. */
-    .umd-brand-site-filter-group-body fieldset[data-collapsed]:not([data-finding]) .umd-brand-site-filter-option-extra { display:none; }
-
-    .umd-brand-site-filter-group-body label[hidden] { display:none; }
+    /* "Show all" collapses the vendor list */
+    .umd-brand-site-filter-group-body fieldset[data-collapsed] .umd-brand-site-filter-option-extra { display:none; }
 
     .umd-brand-site-filter-show-all-cluster.umd-text-cluster-pill { display:inline-flex; margin-top:8px; }
 

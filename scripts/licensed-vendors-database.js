@@ -121,10 +121,7 @@
       return checkbox('vendor', v.name, v.name, null,
         i >= SHOW_LIMIT ? 'umd-brand-site-filter-option-extra' : '');
     }).join('');
-    return '<div class="umd-brand-site-filter-group-find">' +
-      '<label class="sr-only" for="umd-brand-site-filter-vendor-find">Find a vendor name</label>' +
-      '<input type="text" class="umd-field-input" id="umd-brand-site-filter-vendor-find" placeholder="Find a vendor name" autocomplete="off"></div>' +
-      '<fieldset id="umd-brand-site-filter-set-vendor" data-collapsed><legend class="sr-only">Vendor name</legend>' +
+    return '<fieldset id="umd-brand-site-filter-set-vendor" data-collapsed><legend class="sr-only">Vendor name</legend>' +
       rows + '</fieldset>' +
       '<span class="umd-text-cluster-pill umd-brand-site-filter-show-all-cluster">' +
       '<button type="button" class="umd-brand-site-filter-show-all" aria-expanded="false" aria-controls="umd-brand-site-filter-set-vendor">' +
@@ -293,17 +290,6 @@
       var open = btn.parentElement.toggleAttribute('data-open');
       btn.setAttribute('aria-expanded', open);
     }
-  });
-
-  // type-ahead inside the Vendor Name group: narrows the checkbox list only
-  groupsHost.addEventListener('input', function (e) {
-    if (e.target.id !== 'umd-brand-site-filter-vendor-find') return;
-    var n = norm(e.target.value);
-    var set = document.getElementById('umd-brand-site-filter-set-vendor');
-    set.toggleAttribute('data-finding', !!n);
-    set.querySelectorAll('label').forEach(function (l) {
-      l.hidden = !!n && norm(l.textContent).indexOf(n) === -1;
-    });
   });
 
   // "Reset filters" is a umd-element-call-to-action, which clones its button
