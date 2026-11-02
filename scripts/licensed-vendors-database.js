@@ -15,6 +15,9 @@
  * existing card draws it twice (page-builder LAYOUT-PATTERNS.md "Filtered or
  * paginated grids").
  *
+ * Nothing filters as you type or tick: the search icon, Enter and the Filter
+ * button all apply the whole form. Reset filters and the pills apply at once.
+ *
  * The initial keyword comes from the search input's value attribute or a
  * ?q= parameter, so a page can ship pre-searched.
  */
@@ -313,11 +316,6 @@
   }
 
   // ---- events ------------------------------------------------------------
-  var debounce;
-  qInput.addEventListener('input', function () {
-    clearTimeout(debounce);
-    debounce = setTimeout(update, 200);
-  });
   form.addEventListener('submit', function (e) { e.preventDefault(); update(); });
 
   form.addEventListener('change', function (e) {
@@ -328,7 +326,6 @@
         .forEach(function (k) { k.checked = cb.checked; });
     }
     syncBuckets();
-    update();
   });
 
   groupsHost.addEventListener('click', function (e) {
@@ -354,9 +351,13 @@
     }
   });
 
-  // "Reset filters" is a umd-element-call-to-action, which clones its button
-  // into shadow DOM — catch the retargeted click on the light-DOM wrapper.
-  document.querySelector('.umd-brand-site-filter-actions').addEventListener('click', clearAll);
+  // umd-element-call-to-action clones its button into shadow DOM, so the click
+  // retargets to the host and a type="submit" clone would not reach this form.
+  document.querySelector('.umd-brand-site-filter-actions').addEventListener('click', function (e) {
+    var cta = e.target.closest('[data-action]');
+    if (!cta) return;
+    if (cta.getAttribute('data-action') === 'filter') update(); else clearAll();
+  });
 
   pillsHost.addEventListener('click', function (e) {
     if (e.target.closest('[data-clear-all]')) { clearAll(); return; }

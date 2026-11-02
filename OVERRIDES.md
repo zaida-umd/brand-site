@@ -67,6 +67,10 @@ box; this page sets the icon to 24px (`--umd-space-md`) with a 32px hover square
 (`--umd-space-lg`), both centered in the field. The icon artwork and hover colors
 are the DS's, unchanged.
 
+The DS draws that icon as a pseudo-element on the wrapper, so it cannot be clicked.
+`umd-brand-site-filter-search-submit` is an invisible submit button placed over it,
+which is how the search runs on the icon rather than as you type.
+
 ### `umd-shell-pagination*` — numbered results pager
 Same pages. 15 vendors per page, reset to page 1 by any search or filter change.
 No `web-styles-library` bundle ships `umd-shell-*`; the pattern belongs to the CMS

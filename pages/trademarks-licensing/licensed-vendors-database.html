@@ -907,6 +907,15 @@
     }
 
 
+    /* the DS draws the icon on the wrapper, so it can't take a click. This
+       invisible submit button sits exactly over the hover square. */
+    .umd-brand-site-filter-search-submit {
+      position:absolute; z-index:10; padding:0; border:0; background:transparent; cursor:pointer;
+      width:var(--umd-space-lg); height:var(--umd-space-lg);
+      top:calc(50% - var(--umd-space-lg) / 2); right:var(--umd-space-min);
+    }
+
+
     /* accordion filter groups */
     .umd-brand-site-filter-group { border-bottom:1px solid var(--umd-color-black); margin-bottom:24px; padding-bottom:24px; }
 
@@ -984,7 +993,7 @@
 
     .umd-brand-site-filter-bucket-children[hidden] { display:none; }
 
-    .umd-brand-site-filter-actions { margin-top:8px; }
+    .umd-brand-site-filter-actions { display:flex; flex-wrap:wrap; gap:var(--umd-space-xs); margin-top:8px; }
 
     /* active-filter pills — DS .umd-text-cluster-pill chip */
     .umd-brand-site-filter-pills { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:var(--umd-space-md); }
@@ -1474,6 +1483,7 @@
             <label for="umd-brand-site-filter-keyword" class="umd-text-line-trailing umd-brand-site-filter-heading"><span>Keyword search</span></label>
             <div class="umd-field-input-search-wrapper">
               <input type="text" class="umd-field-input" id="umd-brand-site-filter-keyword" name="q" value="" placeholder="e.g. tshirt, mugs" autocomplete="off" />
+              <button type="submit" class="umd-brand-site-filter-search-submit"><span class="sr-only">Search</span></button>
             </div>
           </div>
 
@@ -1482,7 +1492,10 @@
           <div id="umd-brand-site-filter-groups"></div>
 
           <div class="umd-brand-site-filter-actions">
-            <umd-element-call-to-action data-display="outline">
+            <umd-element-call-to-action data-display="primary" data-action="filter">
+              <button type="button">Filter</button>
+            </umd-element-call-to-action>
+            <umd-element-call-to-action data-display="outline" data-action="reset">
               <button type="button">Reset filters</button>
             </umd-element-call-to-action>
           </div>
