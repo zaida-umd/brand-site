@@ -46,8 +46,8 @@
     'Licensing': ['royalty', 'royalties', 'premium']
   };
 
-  // Vendor Name filter is hidden because the keyword search already finds vendors.
-  // Removal is not yet confirmed: set this to true to bring the filter back.
+  // Vendor Name filter is hidden: the keyword search already finds vendors. It
+  // stays in the code in case the partner wants it: set this to true to show it.
   var SHOW_VENDOR_FILTER = false;
 
   var SHOW_LIMIT = 7;

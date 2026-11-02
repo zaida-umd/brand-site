@@ -989,6 +989,9 @@
     /* active-filter pills — DS .umd-text-cluster-pill chip */
     .umd-brand-site-filter-pills { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:var(--umd-space-md); }
 
+    /* display:flex above would otherwise beat [hidden] and leave the margin behind */
+    .umd-brand-site-filter-pills[hidden] { display:none; }
+
     .umd-brand-site-filter-pills-label { font-weight:700; margin-right:4px; }
 
     .umd-brand-site-filter-pill-cluster.umd-text-cluster-pill { margin-top:0; display:inline-flex; flex-wrap:wrap; gap:8px; }
@@ -1444,7 +1447,7 @@
 
   <!-- HERO — stacked, dark, no image: the same treatment brand.umd.edu uses
        on its section landings (Trademarks & Licensing, Visual Identity). -->
-  <section>
+  <section class="umd-layout-vertical-interior">
     <umd-element-hero
       data-display="stacked"
       data-layout-height="small"
@@ -1455,16 +1458,6 @@
       <div slot="text"><p>Find a UMD Licensed Vendor approved for ordering promotional items.</p></div>
     </umd-element-hero>
   </section>
-
-  <div class="umd-layout-space-horizontal-larger umd-layout-space-vertical-interior">
-    <umd-element-breadcrumb>
-      <div slot="paths">
-        <a href="https://brand.umd.edu/" aria-label="Return Home"><span aria-hidden="true">Home</span></a>
-        <a href="https://brand.umd.edu/trademarks-licensing"><span>Trademarks &amp; Licensing</span></a>
-        <p aria-label="Current Page"><span>Licensed Vendors Database</span></p>
-      </div>
-    </umd-element-breadcrumb>
-  </div>
 
   <!-- VENDOR SEARCH — keyword search + filter rail at left, person list at right.
        Behavior and data: scripts/licensed-vendors-database.js and

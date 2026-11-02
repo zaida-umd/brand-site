@@ -47,8 +47,8 @@ checkboxes (`-bucket`, `-bucket-row`, `-bucket-toggle`, `-bucket-children`). It 
 results are unaltered tabular person cards, which draw their own rules. Behavior is in
 `scripts/licensed-vendors-database.js`.
 
-The Vendor Name group is hidden, not removed (`SHOW_VENDOR_FILTER` in that script),
-because the keyword search covers it and removal is not yet confirmed.
+The Vendor Name group is hidden, not removed (`SHOW_VENDOR_FILTER` in that script).
+The keyword search covers it; the code stays in case the partner wants it surfaced.
 
 Two projects now hand-roll the same rail under different namespaces. If a third
 project needs it, promote it to `page-builder` (LAYOUT-PATTERNS.md + a shared
